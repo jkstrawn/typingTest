@@ -26,11 +26,12 @@ Browser-based typing test game
 
 ### Hangman Style ###
 + For every mistake, your avatar loses a limb until you die
-
+ 
 ### Duel Hangman ###
 + You fill up a grid as you type
 + When you make a mistake in a section of the grid, you lose a limb
 + When you fill up a section with no mistakes, your opponent loses a limb
++ I like this, that would be a really cool way to do multiplayer - JW
 
 ### Character Building ###
 + Create and play a character through the sessions, leveling up etc.

@@ -172,13 +172,13 @@
 			}
 
 			function displayLetterTime () {
-				var letterScoresDiv = document.getElementById('letterScores');
+				var letterScoresDiv = $('#letterScores');
 				var html = "<table>";
 				for (var i = 0; i < 26; i++) {
 					html += "<tr><td>" + String.fromCharCode(i+97) + "</td><td>" + letterList[i].averageTime + "ms</td></tr>";
 				}
 				html += "</table>";
-				letterScoresDiv.innerHTML = html;
+				letterScoresDiv.html(html);
 			}
 
 			function recordLetter (letter, previous, time) {
@@ -297,7 +297,7 @@
 			}
 
 			function displayStreak () {
-				document.getElementById('streakDiv').innerHTML = "Streak: " + letterStreak;
+				$('#streakDiv').html("Streak: " + letterStreak);
 			}
 
 			function sendKeyStroke (event) {
@@ -323,8 +323,8 @@
 					//var _letter = new Letter(typedLetter, clockTick, lastLetter, currentPosition);
 					//lettersTyped.push(_letter);
 
-					var letterDiv = document.getElementById('letter'+currentPosition);
-					letterDiv.style.color = 'red';
+					var letterDiv = $('#letter'+currentPosition);
+					letterDiv.css("color", "red");
 					lastLetter = nextLetter;
 					advancePosition();
 				} else {
@@ -338,15 +338,17 @@
 			function setWord (word) {
 				globalWord = word;
 				currentPosition = 0;
-				var wordDiv = document.getElementById('wordDiv');
-				wordDiv.innerHTML = "";
+				var wordDiv = $('#wordDiv');
+				var wordHtml = "";
 				for (var i = 0; i < word.length; i++) {
-					wordDiv.innerHTML += '<span id="letter' + i + '">' + word[i] + '</span>';
+					wordHtml += '<span id="letter' + i + '">' + word[i] + '</span>';
 				};
 
+				wordDiv.html(wordHtml);
+
 				var score = getWordScore(word);
-				var wordScoreDiv = document.getElementById('wordScoreDiv');
-				wordScoreDiv.innerHTML = Number((score).toFixed(4));
+				var wordScoreDiv = $('#wordScoreDiv');
+				wordScoreDiv.html(Number((score).toFixed(4)));
 			}
 
 
@@ -365,6 +367,10 @@
 
 		<div id="wordDiv">
 			<span id="1">r</span><span id="2">u</span><span id="3">f</span><span id="4">f</span><span id="5">i</span><span id="6">a</span><span id="7">n</span>
+		</div>
+
+		<div id="nextWord">
+
 		</div>
 
 		<div id="wordScoreDiv">00</div>
