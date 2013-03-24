@@ -1,5 +1,15 @@
+p{margin:0; padding:0}
+
 #wordDiv {
 	position: absolute;
 	font-family: 'Rufina', serif;
 	font-size: 64px;
+	top: 300px;
+	left: 400px;
+}
+
+#wordScoreDiv {
+	position: absolute;
+	top: 450px;
+	left: 450px;
 }
