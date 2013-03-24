@@ -286,7 +286,18 @@
 
 			function getNewWord () {
 				var rn = Math.floor(Math.random() * wordList.length);
-				var word = wordList[rn];
+				var nextWord = wordList[rn];
+
+				var word = getNextWord();
+
+				setNextWord(nextWord);
+
+				//The first time there will not be a word in the next div, so give a new random one
+				if (word.trim().length < 1)
+				{
+					var random = Math.floor(Math.random() * wordList.length);
+					word = wordList[random];
+				}
 
 				setWord(word);
 			}
@@ -333,6 +344,14 @@
 
 					resetStreak();
 				}
+			}
+
+			function setNextWord (word) {
+				$("#nextWord").html(word);
+			}
+
+			function getNextWord () {
+				return $("#nextWord").text();
 			}
 
 			function setWord (word) {

@@ -13,3 +13,19 @@ p{margin:0; padding:0}
 	top: 450px;
 	left: 450px;
 }
+
+#nextWord 
+{
+	display: inline-block;
+	position: relative;
+	font-family: 'Rufina', serif;
+	font-size: 32px;
+	float: right;
+}
+
+#letterScores
+{
+	display: inline-block;
+	position: relative;
+	float: left;
+}

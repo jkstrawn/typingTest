@@ -5,13 +5,12 @@ Browser-based typing test game
 
 ## To Do ##
 + Add game elements
-+ Add next-word preview
 + Show typing streak prominently
 + Make mistakes visible
 + Clear entire word when a mistake is made
 + Get consecutive-key difficulty
-+ Server to store word statistics
-
++ Server to store word statistics -  I can do this, but we will need to move it into a private repo so the connection info isn't public
++ I want to add where when you finish a word it slides of the screen and then the next slides in, I am going to look at this fiddle when I get a chance, http://jsfiddle.net/jtbowden/ykbgT/
 
 
 ## Partially Done ##
@@ -21,6 +20,7 @@ Browser-based typing test game
 ## Done ##
 + Randomly generate word
 + Type through word and generate next one
++ Add next-word preview
 
 ## Ideas ##
 
