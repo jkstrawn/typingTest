@@ -55,3 +55,6 @@ Browser-based typing test game
 
 ### Certain number of rare letters typed correctly in a row ###
 + Correctly typed 'Q' the last 5 times it came up
+
+### Speed ###
++ Average speed of the letter less than 100msec
