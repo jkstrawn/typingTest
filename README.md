@@ -5,14 +5,16 @@ Browser-based typing test game
 
 ## To Do ##
 + Add game elements
-+ Add next-word preview
 + Show typing streak prominently
 + Make mistakes visible
 + Clear entire word when a mistake is made
 + Get consecutive-key difficulty
-+ Server to store word statistics
-
-
++ Server to store word statistics -  I can do this, but we will need to move it into a private repo so the connection info isn't public
++ I want to add where when you finish a word it slides of the screen and then the next slides in, I am going to look at this fiddle when I get a chance, http://jsfiddle.net/jtbowden/ykbgT/
++ Map each word to a difficulty after storing in a database, then only get words for the current difficulty level, then when advance get a new set of words that are atthe next level
++ Add loading gif for beginning initializing
++ Filter next words based on difficulty
++ Add score to session based on percent correct of word to calculate real score on the finished word
 
 ## Partially Done ##
 + Word difficulty algorithm
@@ -21,16 +23,20 @@ Browser-based typing test game
 ## Done ##
 + Randomly generate word
 + Type through word and generate next one
++ Add next-word preview
++ Calculate all difficulties for words and store them all in an array of word objects at initialization
++ Store words done in current session and make sure new word is not in the session so no repeats
 
 ## Ideas ##
 
 ### Hangman Style ###
 + For every mistake, your avatar loses a limb until you die
-
+ 
 ### Duel Hangman ###
 + You fill up a grid as you type
 + When you make a mistake in a section of the grid, you lose a limb
 + When you fill up a section with no mistakes, your opponent loses a limb
++ I like this, that would be a really cool way to do multiplayer - JW
 
 ### Character Building ###
 + Create and play a character through the sessions, leveling up etc.

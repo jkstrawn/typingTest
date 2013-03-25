@@ -13,3 +13,28 @@ p{margin:0; padding:0}
 	top: 450px;
 	left: 450px;
 }
+
+#HUD 
+{
+	display: inline-block;
+	position: relative;
+	font-family: 'Rufina', serif;
+	float: right;
+}
+
+#nextWord
+{
+	font-size: 32px;
+}
+
+.stats
+{
+	font-size: 16px;
+}
+
+#letterScores
+{
+	display: inline-block;
+	position: relative;
+	float: left;
+}
