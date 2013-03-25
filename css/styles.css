@@ -14,13 +14,22 @@ p{margin:0; padding:0}
 	left: 450px;
 }
 
-#nextWord 
+#HUD 
 {
 	display: inline-block;
 	position: relative;
 	font-family: 'Rufina', serif;
-	font-size: 32px;
 	float: right;
+}
+
+#nextWord
+{
+	font-size: 32px;
+}
+
+.stats
+{
+	font-size: 16px;
 }
 
 #letterScores

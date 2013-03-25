@@ -11,7 +11,9 @@ Browser-based typing test game
 + Get consecutive-key difficulty
 + Server to store word statistics -  I can do this, but we will need to move it into a private repo so the connection info isn't public
 + I want to add where when you finish a word it slides of the screen and then the next slides in, I am going to look at this fiddle when I get a chance, http://jsfiddle.net/jtbowden/ykbgT/
-
++ Map each word to a difficulty after storing in a database, then only get words for the current difficulty level, then when advance get a new set of words that are atthe next level
++ Add loading gif for beginning initializing
++ Filter next words based on difficulty
 
 ## Partially Done ##
 + Word difficulty algorithm
@@ -21,6 +23,7 @@ Browser-based typing test game
 + Randomly generate word
 + Type through word and generate next one
 + Add next-word preview
++ Calculate all difficulties for words and store them all in an array of word objects at initialization
 
 ## Ideas ##
 

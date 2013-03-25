@@ -57,6 +57,32 @@ function LetterRank (score, finger, row) {
 	this.row = row;
 }
 
+function Word () 
+{
+	this.content = "";
+	this.difficulty = 0;
+}
+
+Word.prototype.setDifficulty = function (difficulty)
+{
+	this.difficulty = difficulty;
+}
+
+Word.prototype.getDifficulty = function ()
+{
+	return this.difficulty;
+}
+
+Word.prototype.setContent = function(word)
+{
+	this.content = word;
+}
+
+Word.prototype.toString = function()
+{
+	return this.content;
+}
+
 var keyboardList = [];
 keyboardList[0] = new LetterRank(2.0, 1, 1);
 keyboardList[1] = new LetterRank(1.4, 2, 1);
@@ -134,6 +160,21 @@ var letterStreak = 0;
 var lastLetter = ' ';
 var firstLetter = true;
 
+var thisSession = new UserSession();
+var wordObjectList = [];
+
+function setWordObjectList(wordsList)
+{
+	$.each(wordsList, function (index, element) {
+		var currWord = new Word();
+
+		currWord.setContent(element);
+		currWord.setDifficulty(getWordScore(element));
+
+		wordObjectList.push(currWord);
+	});
+}
+
 
 $(document).ready( function() {
 	$(document).keypress(function(event) { return sendKeyStroke(event) });
@@ -145,8 +186,11 @@ $(document).ready( function() {
 	displayWord('crack');
 	displayWord('rent');
 
+
+
 	wordList = $.unique(wordList.match(/\w+/mg));
 
+	setWordObjectList(wordList);
 
 	getNewWord();
 //	$(document).keyup(function(event) { return false });
@@ -174,10 +218,9 @@ function recordLetter (letter, previous, time) {
 
 function advancePosition () {
 	currentPosition++;
-	letterStreak++;
-	displayStreak();
+	thisSession.addStreak();
 
-	if (currentPosition >= globalWord.length) {
+	if (currentPosition >= globalWord.toString().length) {
 		getNewWord();
 	}
 }
@@ -270,8 +313,8 @@ function getWordScore (word) {
 }
 
 function getNewWord () {
-	var rn = Math.floor(Math.random() * wordList.length);
-	var nextWord = wordList[rn];
+	var rn = Math.floor(Math.random() * wordObjectList.length);
+	var nextWord = wordObjectList[rn];
 
 	var word = getNextWord();
 
@@ -280,20 +323,12 @@ function getNewWord () {
 	//The first time there will not be a word in the next div, so give a new random one
 	if (word.trim().length < 1)
 	{
-		var random = Math.floor(Math.random() * wordList.length);
-		word = wordList[random];
+		var random = Math.floor(Math.random() * wordObjectList.length);
+		word = wordObjectList[random];
 	}
 
 	setWord(word);
-}
-
-function resetStreak () {
-	letterStreak = 0;
-	displayStreak();
-}
-
-function displayStreak () {
-	$('#streakDiv').html("Streak: " + letterStreak);
+	thisSession.addWord();
 }
 
 function sendKeyStroke (event) {
@@ -312,7 +347,7 @@ function cancelBackspace (event) {
 
 function receiveKey (key) {
 	var typedLetter = String.fromCharCode(key);
-	var nextLetter = globalWord[currentPosition];
+	var nextLetter = globalWord.toString()[currentPosition];
 	var clockTick = timer.tick();
 	if (typedLetter == nextLetter) {
 		recordLetter(typedLetter, lastLetter, clockTick);
@@ -322,17 +357,20 @@ function receiveKey (key) {
 		var letterDiv = $('#letter'+currentPosition);
 		letterDiv.css("color", "red");
 		lastLetter = nextLetter;
+		thisSession.addCorrectLetter();
 		advancePosition();
 	} else {
 		//var _mistake = new Mistake(nextLetter, lastLetter, clockTick, typedLetter);
 		//mistakes.push(_mistake);
-
-		resetStreak();
+		thisSession.addMissedLetter();
+		thisSession.resetStreak();
 	}
+
+	$("#stats").html(thisSession.toString());
 }
 
 function setNextWord (word) {
-	$("#nextWord").html(word);
+	$("#nextWord").html(word.toString());
 }
 
 function getNextWord () {
@@ -344,13 +382,13 @@ function setWord (word) {
 	currentPosition = 0;
 	var wordDiv = $('#wordDiv');
 	var wordHtml = "";
-	for (var i = 0; i < word.length; i++) {
-		wordHtml += '<span id="letter' + i + '">' + word[i] + '</span>';
+	for (var i = 0; i < word.toString().length; i++) {
+		wordHtml += '<span id="letter' + i + '">' + word.toString()[i] + '</span>';
 	};
 
 	wordDiv.html(wordHtml);
 
-	var score = getWordScore(word);
+	var score = word.getDifficulty();
 	var wordScoreDiv = $('#wordScoreDiv');
 	wordScoreDiv.html(Number((score).toFixed(4)));
 }
