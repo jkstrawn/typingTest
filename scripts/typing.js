@@ -155,6 +155,7 @@ for (var i = 0; i < 26; i++) {
 }
 
 var globalWord;
+var globalNextWord;
 var currentPosition = 0;
 var letterStreak = 0;
 var lastLetter = ' ';
@@ -221,6 +222,7 @@ function advancePosition () {
 	thisSession.addStreak();
 
 	if (currentPosition >= globalWord.toString().length) {
+		thisSession.addScore(globalWord.getDifficulty());
 		getNewWord();
 	}
 }
@@ -313,22 +315,41 @@ function getWordScore (word) {
 }
 
 function getNewWord () {
-	var rn = Math.floor(Math.random() * wordObjectList.length);
-	var nextWord = wordObjectList[rn];
+	var nextWord = getUnusedWord();
 
 	var word = getNextWord();
 
 	setNextWord(nextWord);
 
 	//The first time there will not be a word in the next div, so give a new random one
-	if (word.trim().length < 1)
+	if (word == undefined)
 	{
-		var random = Math.floor(Math.random() * wordObjectList.length);
-		word = wordObjectList[random];
+		word = getUnusedWord();
 	}
 
 	setWord(word);
-	thisSession.addWord();
+	thisSession.addWord(word);
+}
+
+function getUnusedWord()
+{
+	var randomInt = Math.floor(Math.random() * wordObjectList.length);
+	var unusedWord = wordObjectList[randomInt];
+
+	var used = thisSession.checkWordUsed(unusedWord);
+
+	//Only try to find an unused word if there are any left
+	if(thisSession.getWordUsedLength < wordObjectList.length)
+	{
+		while (used)
+		{
+			randomInt = Math.floor(Math.random() * wordObjectList.length);
+			unusedWord = wordObjectList[randomInt];
+			used = thisSession.checkWordUsed(unusedWord);
+		}
+	}
+
+	return unusedWord;
 }
 
 function sendKeyStroke (event) {
@@ -370,11 +391,12 @@ function receiveKey (key) {
 }
 
 function setNextWord (word) {
+	globalNextWord = word;
 	$("#nextWord").html(word.toString());
 }
 
 function getNextWord () {
-	return $("#nextWord").text();
+	return globalNextWord;
 }
 
 function setWord (word) {

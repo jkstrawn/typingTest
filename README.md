@@ -14,6 +14,7 @@ Browser-based typing test game
 + Map each word to a difficulty after storing in a database, then only get words for the current difficulty level, then when advance get a new set of words that are atthe next level
 + Add loading gif for beginning initializing
 + Filter next words based on difficulty
++ Add score to session based on percent correct of word to calculate real score on the finished word
 
 ## Partially Done ##
 + Word difficulty algorithm
@@ -24,6 +25,7 @@ Browser-based typing test game
 + Type through word and generate next one
 + Add next-word preview
 + Calculate all difficulties for words and store them all in an array of word objects at initialization
++ Store words done in current session and make sure new word is not in the session so no repeats
 
 ## Ideas ##
 
