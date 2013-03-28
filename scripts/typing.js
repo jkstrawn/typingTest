@@ -199,6 +199,9 @@ var firstLetter = true;
 var thisSession = new UserSession();
 var wordObjectList = [];
 
+var mode = "classic";
+var rpgManager = new RpgManager();
+
 function setWordObjectList(wordsList)
 {
 	$.each(wordsList, function (index, element) {
@@ -215,20 +218,13 @@ function setWordObjectList(wordsList)
 $(document).ready( function() {
 	$(document).keypress(function(event) { return sendKeyStroke(event) });
 	$(document).keydown(function(event) { return cancelBackspace(event) });
-	displayWord('learn');
-	displayWord('aspect');
-	displayWord('variety');
-	displayWord('guide');
-	displayWord('crack');
-	displayWord('rent');
 
-
-
-	wordList = $.unique(wordList.match(/\w+/mg));
-
-	setWordObjectList(wordList);
-
-	getNewWord();
+	if (mode == "classic") {
+		initializeClassic();
+	} else if (mode == "rpg") {
+		rpgManager.initialize();
+	}
+	
 //	$(document).keyup(function(event) { return false });
 });
 
@@ -448,4 +444,63 @@ function setWord (word) {
 	var score = word.getDifficulty();
 	var wordScoreDiv = $('#wordScoreDiv');
 	wordScoreDiv.html(Number((score).toFixed(4)));
+}
+
+function initializeClassic() {
+	displayWord('learn');
+	displayWord('aspect');
+	displayWord('variety');
+	displayWord('guide');
+	displayWord('crack');
+	displayWord('rent');
+
+
+
+	wordList = $.unique(wordList.match(/\w+/mg));
+
+	setWordObjectList(wordList);
+
+	getNewWord();
+}
+
+function setMode (newMode) {
+	mode = newMode;
+	if (mode == "classic") {
+		initializeClassic();
+	} else if (mode == 'rpg') {
+		rpgManager.initialize();
+	}
+}
+
+
+function RpgManager() {
+	var zone = "";
+	var character = "";
+}
+
+RpgManager.prototype.initialize = function() {
+	$('body').css({"background-image": "url('img/home.png')", "background-repeat": "no-repeat"});
+
+	var html = "<div id='actions' style='margin-top:200px; margin-left:500px'><table><tr><td><button type='button' onclick='rpgManager.goToMap()'> View Map </button></td></tr></table></div>";
+	$('body').html(html);
+
+
+}
+
+RpgManager.prototype.setZone = function(zone) {
+	this.zone = zone;
+
+	if (zone == "plains") {
+		$('body').css({"background-image": "url('img/plains.png')"});
+		var monsters = "<div style='float:left; margin-right:50px;'><img src='img/cow.png' /></div><div style='float:left'><img src='img/cow.png' /></div>";
+		var html = "<div style='margin-top:500px; margin-left:500px'>" + monsters + "</div>";
+		$('body').html(html);
+	}
+}
+
+RpgManager.prototype.goToMap = function() {
+	$('body').css({"background-image": "url('img/map.png')"});
+
+	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
+	$('body').html(html);
 }
