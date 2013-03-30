@@ -136,21 +136,157 @@ keyboardList[9].digraph[28] = 2.2;
 keyboardList[9].digraph[29] = 2.5;
 
 // O
-keyboardList[9].digraph[5] = 1.4;
-keyboardList[9].digraph[6] = 1.3;
-keyboardList[9].digraph[7] = 1.5;
-keyboardList[9].digraph[8] = 0.0;			//same key
-keyboardList[9].digraph[9] = 2.2;
-keyboardList[9].digraph[15] = 1.3;
-keyboardList[9].digraph[16] = 1.2;
-keyboardList[9].digraph[17] = 1.6;
-keyboardList[9].digraph[18] = 2.0;
-keyboardList[9].digraph[19] = 2.0;
-keyboardList[9].digraph[25] = 1.4;
-keyboardList[9].digraph[26] = 1.5;
-keyboardList[9].digraph[27] = 2.0;
-keyboardList[9].digraph[28] = 2.3;
-keyboardList[9].digraph[29] = 2.3;
+keyboardList[8].digraph[5] = 1.4;
+keyboardList[8].digraph[6] = 1.3;
+keyboardList[8].digraph[7] = 1.5;
+keyboardList[8].digraph[8] = 0.0;			//same key
+keyboardList[8].digraph[9] = 2.2;
+keyboardList[8].digraph[15] = 1.3;
+keyboardList[8].digraph[16] = 1.2;
+keyboardList[8].digraph[17] = 1.6;
+keyboardList[8].digraph[18] = 2.0;
+keyboardList[8].digraph[19] = 2.0;
+keyboardList[8].digraph[25] = 1.4;
+keyboardList[8].digraph[26] = 1.5;
+keyboardList[8].digraph[27] = 2.0;
+keyboardList[8].digraph[28] = 2.3;
+keyboardList[8].digraph[29] = 2.3;
+
+// I
+keyboardList[7].digraph[5] = 1.4;
+keyboardList[7].digraph[6] = 1.3;
+keyboardList[7].digraph[7] = 0.0;			//same key
+keyboardList[7].digraph[8] = 1.3;
+keyboardList[7].digraph[9] = 1.8;
+keyboardList[7].digraph[15] = 1.2;
+keyboardList[7].digraph[16] = 1.1;
+keyboardList[7].digraph[17] = 1.7;
+keyboardList[7].digraph[18] = 1.4;
+keyboardList[7].digraph[19] = 1.5;
+keyboardList[7].digraph[25] = 1.4;
+keyboardList[7].digraph[26] = 1.4;
+keyboardList[7].digraph[27] = 2.2;
+keyboardList[7].digraph[28] = 2.0;
+keyboardList[7].digraph[29] = 2.4;
+
+// U
+keyboardList[6].digraph[5] = 1.9;
+keyboardList[6].digraph[6] = 0.0;			//same key
+keyboardList[6].digraph[7] = 1.2;
+keyboardList[6].digraph[8] = 1.3;
+keyboardList[6].digraph[9] = 1.7;
+keyboardList[6].digraph[15] = 1.8;
+keyboardList[6].digraph[16] = 1.6;
+keyboardList[6].digraph[17] = 1.3;
+keyboardList[6].digraph[18] = 1.4;
+keyboardList[6].digraph[19] = 1.5;
+keyboardList[6].digraph[25] = 2.0;
+keyboardList[6].digraph[26] = 2.0;
+keyboardList[6].digraph[27] = 1.8;
+keyboardList[6].digraph[28] = 1.7;
+keyboardList[6].digraph[29] = 2.2;
+
+// Y
+keyboardList[5].digraph[5] = 1.9;			//same key
+keyboardList[5].digraph[6] = 0.0;
+keyboardList[5].digraph[7] = 1.2;
+keyboardList[5].digraph[8] = 1.3;
+keyboardList[5].digraph[9] = 1.7;
+keyboardList[5].digraph[15] = 1.8;
+keyboardList[5].digraph[16] = 1.6;
+keyboardList[5].digraph[17] = 1.3;
+keyboardList[5].digraph[18] = 1.4;
+keyboardList[5].digraph[19] = 1.5;
+keyboardList[5].digraph[25] = 2.0;
+keyboardList[5].digraph[26] = 2.0;
+keyboardList[5].digraph[27] = 1.8;
+keyboardList[5].digraph[28] = 1.7;
+keyboardList[5].digraph[29] = 2.2;
+
+// ;
+keyboardList[5].digraph[5] = 1.8;
+keyboardList[5].digraph[6] = 1.5;
+keyboardList[5].digraph[7] = 1.5;
+keyboardList[5].digraph[8] = 2.2;
+keyboardList[5].digraph[9] = 2.5;
+keyboardList[5].digraph[15] = 1.4;
+keyboardList[5].digraph[16] = 1.3;
+keyboardList[5].digraph[17] = 1.5;
+keyboardList[5].digraph[18] = 1.9;
+keyboardList[5].digraph[19] = 0.0;			//same key
+keyboardList[5].digraph[25] = 1.4;
+keyboardList[5].digraph[26] = 1.5;
+keyboardList[5].digraph[27] = 1.9;
+keyboardList[5].digraph[28] = 2.2;
+keyboardList[5].digraph[29] = 2.5;
+
+// L
+keyboardList[5].digraph[5] = 1.8;
+keyboardList[5].digraph[6] = 1.5;
+keyboardList[5].digraph[7] = 1.6;
+keyboardList[5].digraph[8] = 2.0;
+keyboardList[5].digraph[9] = 2.4;
+keyboardList[5].digraph[15] = 1.3;
+keyboardList[5].digraph[16] = 1.2;
+keyboardList[5].digraph[17] = 1.4;
+keyboardList[5].digraph[18] = 0.0;			//same key
+keyboardList[5].digraph[19] = 1.7;
+keyboardList[5].digraph[25] = 1.3;
+keyboardList[5].digraph[26] = 1.3;
+keyboardList[5].digraph[27] = 1.9;
+keyboardList[5].digraph[28] = 2.5;
+keyboardList[5].digraph[29] = 2.3;
+
+// K
+keyboardList[5].digraph[5] = 1.8;
+keyboardList[5].digraph[6] = 1.6;
+keyboardList[5].digraph[7] = 1.8;
+keyboardList[5].digraph[8] = 1.4;
+keyboardList[5].digraph[9] = 1.6;
+keyboardList[5].digraph[15] = 1.4;
+keyboardList[5].digraph[16] = 1.2;
+keyboardList[5].digraph[17] = 0.0;			//same key
+keyboardList[5].digraph[18] = 1.1;
+keyboardList[5].digraph[19] = 1.6;
+keyboardList[5].digraph[25] = 1.5;
+keyboardList[5].digraph[26] = 1.3;
+keyboardList[5].digraph[27] = 2.0;
+keyboardList[5].digraph[28] = 1.4;
+keyboardList[5].digraph[29] = 2.1;
+
+// J
+keyboardList[5].digraph[5] = 1.9;
+keyboardList[5].digraph[6] = 1.7;
+keyboardList[5].digraph[7] = 1.1;
+keyboardList[5].digraph[8] = 1.3;
+keyboardList[5].digraph[9] = 1.6;
+keyboardList[5].digraph[15] = 1.7;
+keyboardList[5].digraph[16] = 0.0;			//same key
+keyboardList[5].digraph[17] = 1.0;
+keyboardList[5].digraph[18] = 1.1;
+keyboardList[5].digraph[19] = 1.4;
+keyboardList[5].digraph[25] = 1.8;
+keyboardList[5].digraph[26] = 1.7;
+keyboardList[5].digraph[27] = 1.5;
+keyboardList[5].digraph[28] = 1.4;
+keyboardList[5].digraph[29] = 2.0;
+
+// H
+keyboardList[5].digraph[5] = 2.1;
+keyboardList[5].digraph[6] = 1.7;
+keyboardList[5].digraph[7] = 1.3;
+keyboardList[5].digraph[8] = 1.4;
+keyboardList[5].digraph[9] = 1.6;
+keyboardList[5].digraph[15] = 0.0;			//same key
+keyboardList[5].digraph[16] = 1.7;
+keyboardList[5].digraph[17] = 1.2;
+keyboardList[5].digraph[18] = 1.3;
+keyboardList[5].digraph[19] = 1.4;
+keyboardList[5].digraph[25] = 1.9;
+keyboardList[5].digraph[26] = 2.1;
+keyboardList[5].digraph[27] = 1.6;
+keyboardList[5].digraph[28] = 1.5;
+keyboardList[5].digraph[29] = 2.0;
 
 var dvorakLetterList = [];
 dvorakLetterList[0] = keyboardList[10];
