@@ -16,7 +16,7 @@ function Tile(name, sprite, background, passable) {
 
 Tile.prototype.getImage = function() {
 	//return "<img style='float:left' src='" + this.sprite + "'/>";
-	var html = "<div class='tile' style=\"background-image:('" + this.sprite + "'')\">";
+	var html = "<div class='tile' style=\"background-image:url('" + this.sprite + "')\">";
 	
 	if (this.hasInhabitant()) {
 		this.sprite = 'img/plains-cow.png';

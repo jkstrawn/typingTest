@@ -9,6 +9,7 @@ function Monster(name, life, damage, sprite, icon) {
 	this.sprite = sprite;
 	this.attackInterval = 0;
 	this.dead = false;
+	this.icon = icon;
 }
 
 Monster.prototype.attackPlayer = function() {
@@ -42,7 +43,7 @@ Monster.prototype.isDead = function() {
 //**************************************************************************************
 
 function Cow() {
-	Monster.call(this, "cow", 69, 1, 'img/cow.png', 'img/cow-icon.png');
+	Monster.call(this, "cow", 69, 1, 'img/cow.png', 'img/cow-icon.gif');
 }
 Cow.prototype = new Monster();
 Cow.prototype.constructor = Monster;
