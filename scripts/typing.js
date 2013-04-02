@@ -199,8 +199,8 @@ var firstLetter = true;
 var thisSession = new UserSession();
 var wordObjectList = [];
 
-var mode = "classic";
-var rpgManager = new RpgManager();
+var mode = "rpg";
+var rpgManager;
 
 function setWordObjectList(wordsList)
 {
@@ -216,13 +216,14 @@ function setWordObjectList(wordsList)
 
 
 $(document).ready( function() {
-	$(document).keypress(function(event) { return sendKeyStroke(event) });
-	$(document).keydown(function(event) { return cancelBackspace(event) });
-
 	if (mode == "classic") {
+		$(document).keypress(function(event) { return sendKeyStroke(event) });
+		$(document).keydown(function(event) { return cancelBackspace(event) });
 		initializeClassic();
 	} else if (mode == "rpg") {
+		rpgManager = new RpgManager();
 		rpgManager.initialize();
+		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
 	}
 	
 //	$(document).keyup(function(event) { return false });
@@ -472,35 +473,15 @@ function setMode (newMode) {
 	}
 }
 
+function createArray(length) {
+	var a = new Array(length || 0);
 
-function RpgManager() {
-	var zone = "";
-	var character = "";
-}
-
-RpgManager.prototype.initialize = function() {
-	$('body').css({"background-image": "url('img/home.png')", "background-repeat": "no-repeat"});
-
-	var html = "<div id='actions' style='margin-top:200px; margin-left:500px'><table><tr><td><button type='button' onclick='rpgManager.goToMap()'> View Map </button></td></tr></table></div>";
-	$('body').html(html);
-
-
-}
-
-RpgManager.prototype.setZone = function(zone) {
-	this.zone = zone;
-
-	if (zone == "plains") {
-		$('body').css({"background-image": "url('img/plains.png')"});
-		var monsters = "<div style='float:left; margin-right:50px;'><img src='img/cow.png' /></div><div style='float:left'><img src='img/cow.png' /></div>";
-		var html = "<div style='margin-top:500px; margin-left:500px'>" + monsters + "</div>";
-		$('body').html(html);
+	if (arguments.length > 1) {
+	var args = Array.prototype.slice.call(arguments, 1);
+		for (var i = 0; i < length; i++) {
+			a[i] = createArray.apply(this, args);
+		}
 	}
-}
 
-RpgManager.prototype.goToMap = function() {
-	$('body').css({"background-image": "url('img/map.png')"});
-
-	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
-	$('body').html(html);
+return a;
 }
