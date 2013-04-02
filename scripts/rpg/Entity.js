@@ -58,7 +58,7 @@ Cow.prototype.constructor = Cow;
 //**************************************************************************************
 
 function Dragon() {
-	Monster.call(this, "Dragon", 100, 1, 'img/dragon.png', 'img/dragon-icon.gif');
+	Monster.call(this, "dragon", 100, 1, 'img/dragon.png', 'img/dragon-icon.gif');
 }
 Dragon.prototype = new Monster();
 Dragon.prototype.constructor = Dragon;

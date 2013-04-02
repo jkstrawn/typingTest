@@ -1,45 +1,10 @@
+<script src="jQuery/jquery-1.8.3.js"></script>
 <script type="text/javascript">
-	function Tile(name, sprite, passable) {
-		this.name = name;
-		this.sprite = sprite;
-		this.passable = passable;
+	var spawns = {"cow": 10};
+
+	for (var x in spawns){
+	    // Now foo is a part of EVERY array and 
+	    // will show up here as a value of 'x'
+	    console.log(x + ": " + spawns[x]);
 	}
-
-	/*Tile.prototype.getImage = function() {
-		return "<img style='float:left' src='" + this.sprite + "'/>";
-	}*/
-
-	function Plains() {
-		Tile.call(this, "Plains", "asgf", true);
-		this.inhabitants = [];
-		this.sprite = 'img/plains.png';
-
-		//Tile.call(this, "Plains", 'img/plains.png', true);
-		if (Math.floor((Math.random()*50)+1) == 50) {
-			this.inhabitants.push(new Cow());
-			this.inhabitants.push(new Cow());
-		}
-	}
-	Plains.prototype = new Tile();
-	Plains.prototype.constructor = Plains;
-
-
-	Plains.prototype.getImage = function() {
-		//return "<img style='float:left' src='" + this.sprite + "'/>";
-		if (this.hasInhabitant()) {
-			this.sprite = 'img/plains-cow.png';
-		} else {
-			this.sprite = 'img/plains.png';
-		}
-
-		return "<img style='float:left' height='32' width='32' src='" + this.sprite + "'/>";
-	}
-
-	Plains.prototype.hasInhabitant = function() {
-		return (this.inhabitants.length > 0);
-	}
-
-	var plains = new Plains();
-
-	plains.getImage();
 </script>

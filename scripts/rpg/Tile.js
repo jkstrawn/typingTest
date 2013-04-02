@@ -2,17 +2,47 @@
 //********************************      TILE       *************************************
 //**************************************************************************************
 
-function Tile(name, sprite, background, passable) {
+function Tile(name, sprite, background, passable, spawns) {
 	this.name = name;
 	this.sprite = sprite;
 	this.background = background;
 	this.passable = passable;
 	this.inhabitants = [];
+	this.spawns = spawns;
+
+	for (var index in spawns){
+		var element = spawns[index];
+		if (Math.floor((Math.random() * element) + 1) == element) {
+			this.inhabitants.push(this.factory(index));
+			this.inhabitants.push(this.factory(index));
+		}
+	}
+
+	/*$.each(spawns, function(index, element){
+		if (Math.floor((Math.random() * element) + 1) == element) {
+			this.inhabitants.push(this.factory(index));
+			this.inhabitants.push(this.factory(index));
+		}
+	});*/
+	
 }
 
 /*Tile.prototype.getImage = function() {
 	return "<img style='float:left' src='" + this.sprite + "'/>";
 }*/
+
+Tile.prototype.factory = function(name) {
+	switch(name) {
+		case "cow":
+			return new Cow();
+			break;
+		case "ogre":
+			return new Ogre();
+			break;
+		default:
+			// error
+	}
+}
 
 Tile.prototype.getImage = function() {
 	//return "<img style='float:left' src='" + this.sprite + "'/>";
@@ -47,13 +77,13 @@ Tile.prototype.hasInhabitant = function() {
 //**************************************************************************************
 
 function Plains() {
-	Tile.call(this, "Plains", "img/plains.png", "img/plains-old.png", true);
+	Tile.call(this, "Plains", "img/plains.png", "img/plains-old.png", true, {"cow": 40});
 
 	//Tile.call(this, "Plains", 'img/plains.png', true);
-	if (Math.floor((Math.random()*50)+1) == 50) {
+	/*if (Math.floor((Math.random()*50)+1) == 50) {
 		this.inhabitants.push(new Cow());
 		this.inhabitants.push(new Cow());
-	}
+	}*/
 }
 Plains.prototype = new Tile();
 Plains.prototype.constructor = Plains;
@@ -64,7 +94,7 @@ Plains.prototype.constructor = Plains;
 //**************************************************************************************
 
 function Forest() {
-	Tile.call(this, "forest", "img/forest.png", "img/forest-battle.png", true);
+	Tile.call(this, "forest", "img/forest.png", "img/forest-battle.png", true, {"imp": 15});
 }
 Forest.prototype = new Tile();
 Forest.prototype.constructor = Forest;
@@ -75,12 +105,12 @@ Forest.prototype.constructor = Forest;
 //**************************************************************************************
 
 function Mountains() {
-	Tile.call(this, "mountains", "img/mountains-icon.png", "img/mountains.png", true);
+	Tile.call(this, "mountains", "img/mountains-icon.png", "img/mountains.png", true, {"ogre": 10});
 
-	if (Math.floor((Math.random()*10)+1) == 10) {
+	/*if (Math.floor((Math.random()*10)+1) == 10) {
 		this.inhabitants.push(new Ogre());
 		this.inhabitants.push(new Ogre());
-	}
+	}*/
 }
 Mountains.prototype = new Tile();
 Mountains.prototype.constructor = Mountains;
