@@ -19,10 +19,10 @@ Tile.prototype.getImage = function() {
 	var html = "<div class='tile' style=\"background-image:url('" + this.sprite + "')\">";
 	
 	if (this.hasInhabitant()) {
-		this.sprite = 'img/plains-cow.png';
+		//this.sprite = 'img/plains-cow.png';
 		html += "<img src='" + this.inhabitants[0].getIcon() + "'/>";
 	} else {
-		this.sprite = 'img/plains.png';
+		//this.sprite = 'img/plains.png';
 	}
 
 	html += "</div>";
@@ -47,7 +47,7 @@ Tile.prototype.hasInhabitant = function() {
 //**************************************************************************************
 
 function Plains() {
-	Tile.call(this, "Plains", "img/plains.png", "plains-old.png", true);
+	Tile.call(this, "Plains", "img/plains.png", "img/plains-old.png", true);
 
 	//Tile.call(this, "Plains", 'img/plains.png', true);
 	if (Math.floor((Math.random()*50)+1) == 50) {
@@ -64,8 +64,23 @@ Plains.prototype.constructor = Plains;
 //**************************************************************************************
 
 function Forest() {
-	Tile.call(this, "forest", "asgf", "hgjr", true);
-	this.sprite = 'img/forest.png';
+	Tile.call(this, "forest", "img/forest.png", "img/forest-battle.png", true);
 }
 Forest.prototype = new Tile();
 Forest.prototype.constructor = Forest;
+
+
+//**************************************************************************************
+//********************************    MOUNTAINS    *************************************
+//**************************************************************************************
+
+function Mountains() {
+	Tile.call(this, "mountains", "img/mountains-icon.png", "img/mountains.png", true);
+
+	if (Math.floor((Math.random()*10)+1) == 10) {
+		this.inhabitants.push(new Ogre());
+		this.inhabitants.push(new Ogre());
+	}
+}
+Mountains.prototype = new Tile();
+Mountains.prototype.constructor = Mountains;

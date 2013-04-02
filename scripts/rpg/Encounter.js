@@ -32,7 +32,7 @@ Encounter.prototype.receiveKey = function(key) {
 
 Encounter.prototype.draw = function() {
 	//this.zones["plains"].setZone();
-	$('body').css({"background-image": "url('img/plains-old.png')"});
+	$('body').css({"background-image": "url('" + this.background + "')"});
 
 	var html = "<div id='monsters'>"
 

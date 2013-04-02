@@ -4,6 +4,7 @@
 
 function Monster(name, life, damage, sprite, icon) {
 	this.name = name;
+	this.maxLife = life;
 	this.life = life;
 	this.damage = damage;
 	this.sprite = sprite;
@@ -18,7 +19,9 @@ Monster.prototype.attackPlayer = function() {
 
 Monster.prototype.getImage = function() {
 	if (!this.dead) {
-		return "<div class='monster' style=\"background-image:url('" + this.sprite + "')\"><img height='9' width='" + this.life + "' src='img/hp.png'/></div>";
+		var hp = Math.ceil((this.life/this.maxLife)*69);
+		return "<div class='monster' style=\"background-image:url('" + this.sprite + 
+			"')\"><img height='9' width='" + hp + "' src='img/hp.png'/></div>";
 	}
 }
 
@@ -43,11 +46,34 @@ Monster.prototype.isDead = function() {
 //**************************************************************************************
 
 function Cow() {
-	Monster.call(this, "cow", 69, 1, 'img/cow.png', 'img/cow-icon.gif');
+	Monster.call(this, "cow", 20, 1, 'img/cow.png', 'img/cow-icon.gif');
 }
 Cow.prototype = new Monster();
-Cow.prototype.constructor = Monster;
+Cow.prototype.constructor = Cow;
 
+
+
+//**************************************************************************************
+//********************************     DRAGON      *************************************
+//**************************************************************************************
+
+function Dragon() {
+	Monster.call(this, "Dragon", 100, 1, 'img/dragon.png', 'img/dragon-icon.gif');
+}
+Dragon.prototype = new Monster();
+Dragon.prototype.constructor = Dragon;
+
+
+
+//**************************************************************************************
+//********************************       OGRE      *************************************
+//**************************************************************************************
+
+function Ogre() {
+	Monster.call(this, "ogre", 50, 1, 'img/ogre.png', 'img/ogre-icon.gif');
+}
+Ogre.prototype = new Monster();
+Ogre.prototype.constructor = Ogre;
 
 
 //**************************************************************************************
@@ -94,4 +120,12 @@ Character.prototype.moveLeft = function() {
 
 Character.prototype.moveRight = function() {
 	rpgManager.world.moveCharacter(this.x, this.y, this.x, ++this.y);
+}
+
+Character.prototype.getX = function() {
+	return this.x;
+}
+
+Character.prototype.getY = function() {
+	return this.y;
 }

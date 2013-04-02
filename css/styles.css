@@ -14,9 +14,8 @@ body {
 }
 
 #map {
-	width: 648px;
-	height: 648px;
-	border-width: 4px;
+	width: 352px;
+	height: 352px;
 }
 
 #monsters {
