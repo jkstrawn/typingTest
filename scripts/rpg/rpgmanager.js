@@ -45,6 +45,18 @@ RpgManager.prototype.sendKey = function(event) {
 	}
 }
 
+RpgManager.prototype.sendMouseUp = function(event) {
+	if (this.state == "menu") {
+
+	} else if (this.state == "world") {
+		
+	} else if (this.state == "encounter") {
+		
+	} else if (this.state == "editor") {
+		this.editor.receiveMouseUp(event);
+	}
+}
+
 RpgManager.prototype.goToMap = function() {
 	//$('body').css({"background-image": "url('img/map.png')"});
 	$('body').css({"background-image": "none"});

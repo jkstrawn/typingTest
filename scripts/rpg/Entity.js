@@ -129,3 +129,7 @@ Character.prototype.getX = function() {
 Character.prototype.getY = function() {
 	return this.y;
 }
+
+Character.prototype.getImageWithCoords = function(x, y) {
+	return "<img style='float:left' src='" + this.sprite + "'/>";
+}

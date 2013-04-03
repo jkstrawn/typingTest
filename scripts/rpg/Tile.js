@@ -13,8 +13,8 @@ function Tile(name, sprite, background, passable, spawns) {
 	for (var index in spawns){
 		var element = spawns[index];
 		if (Math.floor((Math.random() * element) + 1) == element) {
-			this.inhabitants.push(this.factory(index));
-			this.inhabitants.push(this.factory(index));
+			this.inhabitants.push(Tile.factory(index));
+			this.inhabitants.push(Tile.factory(index));
 		}
 	}
 
@@ -31,22 +31,39 @@ function Tile(name, sprite, background, passable, spawns) {
 	return "<img style='float:left' src='" + this.sprite + "'/>";
 }*/
 
-Tile.prototype.factory = function(name) {
+Tile.factory = function(name) {
 	switch(name) {
 		case "cow":
 			return new Cow();
-			break;
 		case "ogre":
 			return new Ogre();
-			break;
+		case "plains":
+			return new Plains();
+		case "mountains":
+			return new Mountains();
 		default:
-			// error
+			return null;
 	}
 }
 
 Tile.prototype.getImage = function() {
 	//return "<img style='float:left' src='" + this.sprite + "'/>";
 	var html = "<div class='tile' style=\"background-image:url('" + this.sprite + "')\">";
+	
+	if (this.hasInhabitant()) {
+		//this.sprite = 'img/plains-cow.png';
+		html += "<img src='" + this.inhabitants[0].getIcon() + "'/>";
+	} else {
+		//this.sprite = 'img/plains.png';
+	}
+
+	html += "</div>";
+	return html;
+}
+
+Tile.prototype.getImageWithCoords = function(x, y) {
+	//return "<img style='float:left' src='" + this.sprite + "'/>";
+	var html = "<div id='" + x + "_" + y + "' class='tile' style=\"background-image:url('" + this.sprite + "')\">";
 	
 	if (this.hasInhabitant()) {
 		//this.sprite = 'img/plains-cow.png';
@@ -83,7 +100,7 @@ Tile.prototype.getHtml = function() {
 //**************************************************************************************
 
 function Plains() {
-	Tile.call(this, "Plains", "img/plains.png", "img/plains-old.png", true, {"cow": 40});
+	Tile.call(this, "plains", "img/plains.png", "img/plains-old.png", true, {"cow": 40});
 
 	//Tile.call(this, "Plains", 'img/plains.png', true);
 	/*if (Math.floor((Math.random()*50)+1) == 50) {

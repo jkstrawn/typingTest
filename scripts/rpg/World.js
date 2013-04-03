@@ -64,7 +64,7 @@ World.prototype.getAllHtml = function() {
 			if (this.indexIsOutOfBounds(i) || this.indexIsOutOfBounds(j)) {
 				html += this.getOutOfBoundsImage();
 			} else {
-				html += this.tiles[i][j].getImage();
+				html += this.tiles[i][j].getImageWithCoords(j, i);
 			}
 		}
 		html += "</div><br />";
@@ -76,6 +76,10 @@ World.prototype.getAllHtml = function() {
 
 World.prototype.getTile = function() {
 	return new Plains();
+}
+
+World.prototype.getTileByCoords = function(x, y) {
+	return this.tiles[y][x];
 }
 
 World.prototype.getTiles = function() {
@@ -123,6 +127,10 @@ World.prototype.receiveKey = function(key) {
 			character.moveRight();
 		}
 	}
+}
+
+World.prototype.setTile = function(x, y, tile) {
+	this.tiles[y][x] = tile;
 }
 
 

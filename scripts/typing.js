@@ -412,6 +412,9 @@ $(document).ready( function() {
 		rpgManager = new RpgManager();
 		rpgManager.initialize();
 		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
+		$(document).mouseup(function(event) {
+			rpgManager.sendMouseUp(event);
+		});
 	}
 
 	// When clicking on the button close or the mask layer the popup closed
