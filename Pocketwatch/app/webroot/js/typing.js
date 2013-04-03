@@ -130,6 +130,7 @@ Controller.prototype.init = function(wordList) {
 	this.setWordObjectList(wordList);
 
 	this.getNewWord();
+	this.displayLetterTime();
 }
 
 //Initiate the list of all words that can be used
