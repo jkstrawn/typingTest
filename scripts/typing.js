@@ -83,102 +83,6 @@ Word.prototype.toString = function()
 	return this.content;
 }
 
-var keyboardList = [];
-keyboardList[0] = new LetterRank(2.0, 1, 1);	// q
-keyboardList[1] = new LetterRank(1.4, 2, 1);	// w 
-keyboardList[2] = new LetterRank(1.3, 3, 1);	// e 
-keyboardList[3] = new LetterRank(1.1, 4, 1);	// r
-keyboardList[4] = new LetterRank(1.3, 4, 1);	// t
-keyboardList[5] = new LetterRank(1.3, 9, 1);	// y
-keyboardList[6] = new LetterRank(1.1, 9, 1);	// u
-keyboardList[7] = new LetterRank(1.3, 8, 1);	// i
-keyboardList[8] = new LetterRank(1.4, 7, 1);	// o
-keyboardList[9] = new LetterRank(2.0, 6, 1);	// p
-
-keyboardList[10] = new LetterRank(1.5, 1, 2);	// a
-keyboardList[11] = new LetterRank(1.2, 2, 2);	// s
-keyboardList[12] = new LetterRank(1.1, 3, 2);	// d
-keyboardList[13] = new LetterRank(1.0, 4, 2);	// f
-keyboardList[14] = new LetterRank(1.0, 4, 2);	// g
-keyboardList[15] = new LetterRank(1.0, 9, 2);	// h
-keyboardList[16] = new LetterRank(1.0, 9, 2);	// j
-keyboardList[17] = new LetterRank(1.1, 8, 2);	// k
-keyboardList[18] = new LetterRank(1.2, 7, 2);	// l
-keyboardList[19] = new LetterRank(1.5, 6, 2);	// ;
-
-keyboardList[20] = new LetterRank(2.5, 1, 3);	// z
-keyboardList[21] = new LetterRank(2.0, 2, 3);	// x
-keyboardList[22] = new LetterRank(1.7, 3, 3);	// c
-keyboardList[23] = new LetterRank(1.2, 4, 3);	// v
-keyboardList[24] = new LetterRank(1.2, 4, 3);	// b
-keyboardList[25] = new LetterRank(1.2, 9, 3);	// n
-keyboardList[26] = new LetterRank(1.2, 9, 3);	// m
-keyboardList[27] = new LetterRank(1.7, 8, 3);	// ,
-keyboardList[28] = new LetterRank(1.7, 7, 3);	// .
-keyboardList[29] = new LetterRank(2.5, 6, 3);	// /
-
-//determine difficulty of digraph for the key BEFORE this key
-// P
-keyboardList[9].digraph[5] = 1.4;
-keyboardList[9].digraph[6] = 1.3;
-keyboardList[9].digraph[7] = 1.5;
-keyboardList[9].digraph[8] = 1.7;
-keyboardList[9].digraph[9] = 0.0;			//same key
-keyboardList[9].digraph[15] = 1.2;
-keyboardList[9].digraph[16] = 1.3;
-keyboardList[9].digraph[17] = 1.5;
-keyboardList[9].digraph[18] = 1.8;
-keyboardList[9].digraph[19] = 2.2;
-keyboardList[9].digraph[25] = 1.2;
-keyboardList[9].digraph[26] = 1.4;
-keyboardList[9].digraph[27] = 2.0;
-keyboardList[9].digraph[28] = 2.2;
-keyboardList[9].digraph[29] = 2.5;
-
-// O
-keyboardList[9].digraph[5] = 1.4;
-keyboardList[9].digraph[6] = 1.3;
-keyboardList[9].digraph[7] = 1.5;
-keyboardList[9].digraph[8] = 0.0;			//same key
-keyboardList[9].digraph[9] = 2.2;
-keyboardList[9].digraph[15] = 1.3;
-keyboardList[9].digraph[16] = 1.2;
-keyboardList[9].digraph[17] = 1.6;
-keyboardList[9].digraph[18] = 2.0;
-keyboardList[9].digraph[19] = 2.0;
-keyboardList[9].digraph[25] = 1.4;
-keyboardList[9].digraph[26] = 1.5;
-keyboardList[9].digraph[27] = 2.0;
-keyboardList[9].digraph[28] = 2.3;
-keyboardList[9].digraph[29] = 2.3;
-
-var dvorakLetterList = [];
-dvorakLetterList[0] = keyboardList[10];
-dvorakLetterList[1] = keyboardList[25];
-dvorakLetterList[2] = keyboardList[7];
-dvorakLetterList[3] = keyboardList[15];
-dvorakLetterList[4] = keyboardList[12];
-dvorakLetterList[5] = keyboardList[5];
-dvorakLetterList[6] = keyboardList[6];
-dvorakLetterList[7] = keyboardList[16];
-dvorakLetterList[8] = keyboardList[14];
-dvorakLetterList[9] = keyboardList[22];
-dvorakLetterList[10] = keyboardList[23];
-dvorakLetterList[11] = keyboardList[9];
-dvorakLetterList[12] = keyboardList[26];
-dvorakLetterList[13] = keyboardList[18];
-dvorakLetterList[14] = keyboardList[11];
-dvorakLetterList[15] = keyboardList[3];
-dvorakLetterList[16] = keyboardList[21];
-dvorakLetterList[17] = keyboardList[8];
-dvorakLetterList[18] = keyboardList[19];
-dvorakLetterList[19] = keyboardList[17];
-dvorakLetterList[20] = keyboardList[13];
-dvorakLetterList[21] = keyboardList[28];
-dvorakLetterList[22] = keyboardList[27];
-dvorakLetterList[23] = keyboardList[24];
-dvorakLetterList[24] = keyboardList[4];
-dvorakLetterList[25] = keyboardList[29];
 
 var lettersTyped = [];
 var wordsType = [];
@@ -484,4 +388,44 @@ function createArray(length) {
 	}
 
 return a;
+}
+
+//********************************************************************** PAGE LOADED *********************************************************************
+
+var mode = "classic";
+var rpgManager = new RpgManager();
+var controller = new Controller();
+
+$(document).ready( function() {
+	$(document).keypress(function(event) { return sendKeyStroke(event) });
+	$(document).keydown(function(event) { return cancelBackspace(event) });
+	controller.init(wordList);
+	setMode(mode);
+
+//	$(document).keyup(function(event) { return false });
+});
+
+function displayWord (word) {
+	console.log("Word score of " + word + " = " + controller.getWordScore(word));
+}
+
+function setMode (newMode) {
+	mode = newMode;
+	if (mode == 'rpg') {
+		rpgManager.initialize();
+	}
+}
+
+function sendKeyStroke (event) {
+	//console.log("key: " + event.keyCode);
+	controller.receiveKey(event.keyCode);
+	return false;
+}
+
+function cancelBackspace (event) {
+	//console.log("key: " + event.keyCode);
+	if (event.keyCode == 8 || event.keyCode == 9) {
+		controller.receiveKey(event.keyCode);
+		return false;
+	}
 }
