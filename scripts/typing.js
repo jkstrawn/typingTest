@@ -398,7 +398,7 @@ Controller.prototype.convert = function(index) {
 
 //********************************************************************** PAGE LOADED *********************************************************************
 
-var mode = "classic";
+var mode = "rpg";
 var rpgManager = new RpgManager();
 var controller = new Controller();
 

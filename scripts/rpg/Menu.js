@@ -8,6 +8,7 @@ function Menu() {
 	// buttons on the home screen
 	this.buttons.push("<button class='action' type='button' onclick='rpgManager.goToMap()'> View Map </button>");
 	this.buttons.push("<button class='action' type='button' onclick='rpgManager.test()'> test </button>");
+	this.buttons.push("<button class='action' type='button' onclick='rpgManager.goToEditor()'> Editor </button>");
 }
 
 Menu.prototype.receiveKey = function(key) {

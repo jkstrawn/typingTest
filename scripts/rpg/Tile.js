@@ -71,6 +71,12 @@ Tile.prototype.hasInhabitant = function() {
 	return (this.inhabitants.length > 0);
 }
 
+Tile.prototype.getHtml = function() {
+	var html = "<div class='tile' style=\"background-image:url('" + this.sprite + "')\"></div>";
+	html += "<p style='float:left;padding:7px;'>" + this.name + "</p>";
+	return html;
+}
+
 
 //**************************************************************************************
 //********************************     PLAINS      *************************************
