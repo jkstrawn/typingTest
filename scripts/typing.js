@@ -11,7 +11,29 @@ Timer.prototype.tick = function() {
 
     return deltaTime;
 }
+var timer = new Timer();
 
+/*
+function Mistake (letter, previous, time, typedLetter) {
+	this.current = letter;
+	this.previous = letter;
+	this.time = time;
+	this.typedLetter = typedLetter;
+}
+
+function Letter (letter, time, previous, position) {
+	this.current = letter;
+	this.time = time;
+	this.previous = previous;
+	this.position = position;
+}
+
+function Word (word, timeBefore, time) {
+	this.current = word;
+	this.timeBefore = timeBefore;
+	this.time = time;
+}
+*/
 function Key () {
 	this.totalTime = 0;
 	this.count = 0;
@@ -156,6 +178,9 @@ Controller.prototype.getNewWord = function() {
 	if (wordToUse == undefined) {
 		wordToUse = this.getUnusedWord();
 	}
+	
+//	$(document).keyup(function(event) { return false });
+});
 
 	this.setWord(wordToUse);
 	this.session.addWord(wordToUse);
@@ -243,6 +268,14 @@ Controller.prototype.getWordScore = function(word) {
 	var sum = 0;
 	var handDuration = 1;
 
+	for (var i = 0; i < 26; i++) {
+		//for each letter
+		
+	}
+	for (var i = 0; i < word.length; i++) {
+
+	}
+
 	for (var i = 0; i < word.length; i++) {
 		var letter = word[i];
 		var letterCode = letter.charCodeAt(0)-97;
@@ -305,6 +338,59 @@ Controller.prototype.receiveKey = function(key) {
 	var nextLetter = this.currentWord.toString()[this.currentPosition];
 	var clockTick = this.timer.tick();
 
+	var word = getNextWord();
+
+	setNextWord(nextWord);
+
+	//The first time there will not be a word in the next div, so give a new random one
+	if (word == undefined)
+	{
+		word = getUnusedWord();
+	}
+
+	setWord(word);
+	thisSession.addWord(word);
+}
+
+function getUnusedWord()
+{
+	var randomInt = Math.floor(Math.random() * wordObjectList.length);
+	var unusedWord = wordObjectList[randomInt];
+
+	var used = thisSession.checkWordUsed(unusedWord);
+
+	//Only try to find an unused word if there are any left
+	if(thisSession.getWordUsedLength < wordObjectList.length)
+	{
+		while (used)
+		{
+			randomInt = Math.floor(Math.random() * wordObjectList.length);
+			unusedWord = wordObjectList[randomInt];
+			used = thisSession.checkWordUsed(unusedWord);
+		}
+	}
+
+	return unusedWord;
+}
+
+function sendKeyStroke (event) {
+	//console.log("key: " + event.keyCode);
+	receiveKey(event.keyCode);
+	return false;
+}
+
+function cancelBackspace (event) {
+	//console.log("key: " + event.keyCode);
+	if (event.keyCode == 8 || event.keyCode == 9) {
+		receiveKey(event.keyCode);
+		return false;
+	}
+}
+
+function receiveKey (key) {
+	var typedLetter = String.fromCharCode(key);
+	var nextLetter = globalWord.toString()[currentPosition];
+	var clockTick = timer.tick();
 	if (typedLetter == nextLetter) {
 		this.recordLetter(typedLetter, this.currentLetter, clockTick);
 		//var _letter = new Letter(typedLetter, clockTick, currentLetter, currentPosition);
@@ -325,6 +411,10 @@ Controller.prototype.receiveKey = function(key) {
 	$("#stats").html(this.session.toString());
 }
 
+function setNextWord (word) {
+	globalNextWord = word;
+	$("#nextWord").html(word.toString());
+}
 
 //*****************************************************************************************************************************************************************
 //****************************************************************** RPG MANAGER **********************************************************************************
@@ -360,46 +450,4 @@ RpgManager.prototype.goToMap = function() {
 
 	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
 	$('body').html(html);
-}
-
-
-
-//********************************************************************** PAGE LOADED *********************************************************************
-
-var mode = "classic";
-var rpgManager = new RpgManager();
-var controller = new Controller();
-
-$(document).ready( function() {
-	$(document).keypress(function(event) { return sendKeyStroke(event) });
-	$(document).keydown(function(event) { return cancelBackspace(event) });
-	controller.init(wordList);
-	setMode(mode);
-	
-//	$(document).keyup(function(event) { return false });
-});
-
-function displayWord (word) {
-	console.log("Word score of " + word + " = " + controller.getWordScore(word));
-}
-
-function setMode (newMode) {
-	mode = newMode;
-	if (mode == 'rpg') {
-		rpgManager.initialize();
-	}
-}
-
-function sendKeyStroke (event) {
-	//console.log("key: " + event.keyCode);
-	controller.receiveKey(event.keyCode);
-	return false;
-}
-
-function cancelBackspace (event) {
-	//console.log("key: " + event.keyCode);
-	if (event.keyCode == 8 || event.keyCode == 9) {
-		controller.receiveKey(event.keyCode);
-		return false;
-	}
 }
