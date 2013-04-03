@@ -11,29 +11,7 @@ Timer.prototype.tick = function() {
 
     return deltaTime;
 }
-var timer = new Timer();
 
-/*
-function Mistake (letter, previous, time, typedLetter) {
-	this.current = letter;
-	this.previous = letter;
-	this.time = time;
-	this.typedLetter = typedLetter;
-}
-
-function Letter (letter, time, previous, position) {
-	this.current = letter;
-	this.time = time;
-	this.previous = previous;
-	this.position = position;
-}
-
-function Word (word, timeBefore, time) {
-	this.current = word;
-	this.timeBefore = timeBefore;
-	this.time = time;
-}
-*/
 function Key () {
 	this.totalTime = 0;
 	this.count = 0;
@@ -179,9 +157,6 @@ Controller.prototype.getNewWord = function() {
 	if (wordToUse == undefined) {
 		wordToUse = this.getUnusedWord();
 	}
-	
-//	$(document).keyup(function(event) { return false });
-});
 
 	this.setWord(wordToUse);
 	this.session.addWord(wordToUse);
@@ -420,44 +395,6 @@ Controller.prototype.convert = function(index) {
 		return index;
 	}
 }
-
-//*****************************************************************************************************************************************************************
-//****************************************************************** RPG MANAGER **********************************************************************************
-//*****************************************************************************************************************************************************************
-
-function RpgManager() {
-	var zone = "";
-	var character = "";
-}
-
-RpgManager.prototype.initialize = function() {
-	$('body').css({"background-image": "url('img/home.png')", "background-repeat": "no-repeat"});
-
-	var html = "<div id='actions' style='margin-top:200px; margin-left:500px'><table><tr><td><button type='button' onclick='rpgManager.goToMap()'> View Map </button></td></tr></table></div>";
-	$('body').html(html);
-
-
-}
-
-RpgManager.prototype.setZone = function(zone) {
-	this.zone = zone;
-
-	if (zone == "plains") {
-		$('body').css({"background-image": "url('img/plains.png')"});
-		var monsters = "<div style='float:left; margin-right:50px;'><img src='img/cow.png' /></div><div style='float:left'><img src='img/cow.png' /></div>";
-		var html = "<div style='margin-top:500px; margin-left:500px'>" + monsters + "</div>";
-		$('body').html(html);
-	}
-}
-
-RpgManager.prototype.goToMap = function() {
-	$('body').css({"background-image": "url('img/map.png')"});
-
-	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
-	$('body').html(html);
-}
-
-
 
 //********************************************************************** PAGE LOADED *********************************************************************
 
