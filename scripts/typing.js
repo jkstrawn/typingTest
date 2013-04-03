@@ -403,12 +403,16 @@ var rpgManager = new RpgManager();
 var controller = new Controller();
 
 $(document).ready( function() {
-	$(document).keypress(function(event) { return sendKeyStroke(event) });
-	$(document).keydown(function(event) { return cancelBackspace(event) });
-	controller.init(wordList);
-	setMode(mode);
-	
-
+	if (mode == "classic") {
+		$(document).keypress(function(event) { return sendKeyStroke(event) });
+		$(document).keydown(function(event) { return cancelBackspace(event) });
+		controller.init(wordList);
+		setMode(mode);
+	} else if (mode == "rpg") {
+		rpgManager = new RpgManager();
+		rpgManager.initialize();
+		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
+	}
 
 	// When clicking on the button close or the mask layer the popup closed
 	$('a.close, #mask').live('click', function() { 
