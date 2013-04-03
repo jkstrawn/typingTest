@@ -83,87 +83,183 @@ Word.prototype.toString = function()
 	return this.content;
 }
 
+var dvorak = [];
+dvorak[0] = 10;
+dvorak[1] = 25;
+dvorak[2] = 7;
+dvorak[3] = 15;
+dvorak[4] = 12;
+dvorak[5] = 5;
+dvorak[6] = 6;
+dvorak[7] = 16;
+dvorak[8] = 14;
+dvorak[9] = 22;
+dvorak[10] = 23;
+dvorak[11] = 9;
+dvorak[12] = 26;
+dvorak[13] = 18;
+dvorak[14] = 11;
+dvorak[15] = 3;
+dvorak[16] = 21;
+dvorak[17] = 8;
+dvorak[18] = 19;
+dvorak[19] = 17;
+dvorak[20] = 13;
+dvorak[21] = 28;
+dvorak[22] = 27;
+dvorak[23] = 24;
+dvorak[24] = 4;
+dvorak[25] = 29;
 
-var lettersTyped = [];
-var wordsType = [];
-var mistakes = [];
+//*****************************************************************************************************************************************************************
+//******************************************************************* CONTROLLER **********************************************************************************
+//*****************************************************************************************************************************************************************
+function Controller() {
+	this.lettersTyped = [];
+	this.wordsType = [];
+	this.mistakes = [];
 
-var letterList = [];
-for (var i = 0; i < 26; i++) {
-	letterList[i] = new Key();
+	this.letterList = [];
+
+	this.currentWord;
+	this.nextWord;
+	this.currentPosition = 0;
+	this.letterStreak = 0;
+	this.currentLetter = ' ';
+	this.firstLetter = true;
+
+	this.session = new UserSession();
+	this.wordObjectList = [];
+	this.timer = new Timer();
 }
 
-var globalWord;
-var globalNextWord;
-var currentPosition = 0;
-var letterStreak = 0;
-var lastLetter = ' ';
-var firstLetter = true;
+Controller.prototype.init = function(wordList) {
 
-var thisSession = new UserSession();
-var wordObjectList = [];
+	for (var i = 0; i < 26; i++) {
+		this.letterList[i] = new Key();
+	}
 
-var mode = "rpg";
-var rpgManager;
+	displayWord('treat');
+	displayWord('against');
+	displayWord('break');
+	displayWord('pasta');
+	displayWord('cope');
+	displayWord('jaw');
 
-function setWordObjectList(wordsList)
-{
+	var wordList = $.unique(wordList.match(/\w+/mg));
+
+	this.setWordObjectList(wordList);
+
+	this.getNewWord();
+}
+
+//Initiate the list of all words that can be used
+Controller.prototype.setWordObjectList = function(wordsList) {
+	var that = this;
 	$.each(wordsList, function (index, element) {
 		var currWord = new Word();
 
 		currWord.setContent(element);
-		currWord.setDifficulty(getWordScore(element));
+		currWord.setDifficulty(that.getWordScore(element));
 
-		wordObjectList.push(currWord);
+		that.wordObjectList.push(currWord);
 	});
 }
 
+//Grab a new word from the list of total words and set it as the next word to use
+Controller.prototype.getNewWord = function() {
+	var _nextWord = this.getUnusedWord();
 
-$(document).ready( function() {
-	if (mode == "classic") {
-		$(document).keypress(function(event) { return sendKeyStroke(event) });
-		$(document).keydown(function(event) { return cancelBackspace(event) });
-		initializeClassic();
-	} else if (mode == "rpg") {
-		rpgManager = new RpgManager();
-		rpgManager.initialize();
-		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
+	var wordToUse = this.nextWord;
+
+	this.setNextWord(_nextWord);
+
+	//The first time there will not be a word in the next div, so give a new random one
+	if (wordToUse == undefined) {
+		wordToUse = this.getUnusedWord();
 	}
 	
 //	$(document).keyup(function(event) { return false });
 });
 
-function displayWord (word) {
-	console.log("Word score of " + word + " = " + getWordScore(word));
+	this.setWord(wordToUse);
+	this.session.addWord(wordToUse);
 }
 
-function displayLetterTime () {
+Controller.prototype.setNextWord = function(word) {
+	this.nextWord = word;
+	$("#nextWord").html(word.toString());
+}
+
+//Get a word that has not been used yet from the word object list
+Controller.prototype.getUnusedWord = function() {
+	var randomInt = Math.floor(Math.random() * this.wordObjectList.length);
+	var unusedWord = this.wordObjectList[randomInt];
+
+	var isWordUsed = this.session.checkWordUsed(unusedWord);
+
+	//Only try to find an unused word if there are any left
+	if(this.session.getWordUsedLength < this.wordObjectList.length) {
+		while (isWordUsed) {
+			//get a new word if the word is used
+			randomInt = Math.floor(Math.random() * this.wordObjectList.length);
+			unusedWord = this.wordObjectList[randomInt];
+			isWordUsed = this.session.checkWordUsed(unusedWord);
+		}
+	}
+
+	return unusedWord;
+}
+
+//Set the word onto page for the user to type
+Controller.prototype.setWord = function(word) {
+	this.currentWord = word;
+	this.currentPosition = 0;
+	var wordDiv = $('#wordDiv');
+	var wordHtml = "";
+
+	//create the individual letter spans (so they can be colored as they are typed)
+	for (var i = 0; i < word.toString().length; i++) {
+		wordHtml += '<span id="letter' + i + '">' + word.toString()[i] + '</span>';
+	};
+
+	wordDiv.html(wordHtml);
+
+	var score = word.getDifficulty();
+	var wordScoreDiv = $('#wordScoreDiv');	
+	//Set the score of the word onto the score div
+	wordScoreDiv.html(Number((score).toFixed(4)));
+}
+
+//Update the timings on the page for the individual letters typed
+Controller.prototype.displayLetterTime = function() {
 	var letterScoresDiv = $('#letterScores');
 	var html = "<table>";
 	for (var i = 0; i < 26; i++) {
-		html += "<tr><td>" + String.fromCharCode(i+97) + "</td><td>" + letterList[i].averageTime + "ms</td></tr>";
+		html += "<tr><td>" + String.fromCharCode(i+97) + "</td><td>" + this.letterList[i].averageTime + "ms</td></tr>";
 	}
 	html += "</table>";
 	letterScoresDiv.html(html);
 }
 
-function recordLetter (letter, previous, time) {
+//Record a key that was typed, and add the timing to the letter list
+Controller.prototype.recordLetter = function(letter, previous, time) {
 	var index = letter.charCodeAt(0)-97;
-	letterList[index].setLetterTiming(time);
-	displayLetterTime();
+	this.letterList[index].setLetterTiming(time);
+	this.displayLetterTime();
 }
 
-function advancePosition () {
-	currentPosition++;
-	thisSession.addStreak();
+Controller.prototype.advancePosition = function() {
+	this.currentPosition++;
+	this.session.addStreak();
 
-	if (currentPosition >= globalWord.toString().length) {
-		thisSession.addScore(globalWord.getDifficulty());
-		getNewWord();
+	if (this.currentPosition >= this.currentWord.toString().length) {
+		this.session.addScore(this.currentWord.getDifficulty());
+		this.getNewWord();
 	}
 }
 
-function getWordScore (word) {
+Controller.prototype.getWordScore = function(word) {
 	var letters = [];
 	var previousFinger = -1;
 	var previousRow = 0;
@@ -183,47 +279,34 @@ function getWordScore (word) {
 	for (var i = 0; i < word.length; i++) {
 		var letter = word[i];
 		var letterCode = letter.charCodeAt(0)-97;
-		var score = dvorakLetterList[letterCode].score;
-		var row = dvorakLetterList[letterCode].row;
-		var finger = dvorakLetterList[letterCode].finger;
+		var score = keyboardList[dvorak[letterCode]].score;
+		var row = keyboardList[dvorak[letterCode]].row;
+		var finger = keyboardList[dvorak[letterCode]].finger;
 		var hand = (finger < 5) ? 1 : 2;
 
 		//add word length difficulty modifier
 		score += .07*i;
-		if (previousLetter == letter) {
-			//add same letter difficulty
-			score *= 1.3;
-		} else if (previousFinger == finger) {
-			//add same finger difficulty
-			score *= 1.7;
-		} else if (Math.abs(previousFinger - finger) == 1 && row != 2) {
-			//add same hand difficulty if its off the home row and fingers are next to each other
-			score *= 1.3;
-		}
+
 		if (previousHand == hand) {
+			if (previousLetter >= 0) {
+				//add digraph difficulty
+				score += keyboardList[dvorak[letterCode]].digraph[dvorak[previousLetter]];
+			}
+
 			//harder the longer its on the same hand
 			handDuration++;
-			score += handDuration*handDuration*.2; 
+			score += handDuration*handDuration*.1; 
 		} else {
 			handDuration = 1;
-		}
-		if (previousFinger == finger+1 && row == 2) {
-			//add consecutive home row difficulty
-			score += .6;
-		} else if (previousFinger == finger-1 && row == 2) {
-			//add natural consecutive home row easiness
-			score -= .3;
-		}
-		if (i == 0 && row != 2) {
-			//if the word starts off the home row
-			score *= 1.15;
+			//add default difficulty
+			score += 0.9;
 		}
 
 		letters[i] = score;
 		sum += score;
 
 		previousFinger = finger;
-		previousLetter = letter;
+		previousLetter = letterCode;
 		previousRow = row;
 		previousHand = hand;
 	}
@@ -241,17 +324,19 @@ function getWordScore (word) {
 		}
 
 
-		if (count > 1) {
+		if (count > 2) {
 			//the more occurances there are of the same letter, add more difficulty
-			finalScore += .1 * count;
+			finalScore += .2 * count;
 		}
 	}
 
 	return finalScore;
 }
 
-function getNewWord () {
-	var nextWord = getUnusedWord();
+Controller.prototype.receiveKey = function(key) {
+	var typedLetter = String.fromCharCode(key);
+	var nextLetter = this.currentWord.toString()[this.currentPosition];
+	var clockTick = this.timer.tick();
 
 	var word = getNextWord();
 
@@ -307,23 +392,23 @@ function receiveKey (key) {
 	var nextLetter = globalWord.toString()[currentPosition];
 	var clockTick = timer.tick();
 	if (typedLetter == nextLetter) {
-		recordLetter(typedLetter, lastLetter, clockTick);
-		//var _letter = new Letter(typedLetter, clockTick, lastLetter, currentPosition);
+		this.recordLetter(typedLetter, this.currentLetter, clockTick);
+		//var _letter = new Letter(typedLetter, clockTick, currentLetter, currentPosition);
 		//lettersTyped.push(_letter);
 
-		var letterDiv = $('#letter'+currentPosition);
+		var letterDiv = $('#letter'+this.currentPosition);
 		letterDiv.css("color", "red");
-		lastLetter = nextLetter;
-		thisSession.addCorrectLetter();
-		advancePosition();
+		this.currentLetter = nextLetter;
+		this.session.addCorrectLetter();
+		this.advancePosition();
 	} else {
-		//var _mistake = new Mistake(nextLetter, lastLetter, clockTick, typedLetter);
+		//var _mistake = new Mistake(nextLetter, currentLetter, clockTick, typedLetter);
 		//mistakes.push(_mistake);
-		thisSession.addMissedLetter();
-		thisSession.resetStreak();
+		this.session.addMissedLetter();
+		this.session.resetStreak();
 	}
 
-	$("#stats").html(thisSession.toString());
+	$("#stats").html(this.session.toString());
 }
 
 function setNextWord (word) {
@@ -331,101 +416,38 @@ function setNextWord (word) {
 	$("#nextWord").html(word.toString());
 }
 
-function getNextWord () {
-	return globalNextWord;
+//*****************************************************************************************************************************************************************
+//****************************************************************** RPG MANAGER **********************************************************************************
+//*****************************************************************************************************************************************************************
+
+function RpgManager() {
+	var zone = "";
+	var character = "";
 }
 
-function setWord (word) {
-	globalWord = word;
-	currentPosition = 0;
-	var wordDiv = $('#wordDiv');
-	var wordHtml = "";
-	for (var i = 0; i < word.toString().length; i++) {
-		wordHtml += '<span id="letter' + i + '">' + word.toString()[i] + '</span>';
-	};
+RpgManager.prototype.initialize = function() {
+	$('body').css({"background-image": "url('img/home.png')", "background-repeat": "no-repeat"});
 
-	wordDiv.html(wordHtml);
+	var html = "<div id='actions' style='margin-top:200px; margin-left:500px'><table><tr><td><button type='button' onclick='rpgManager.goToMap()'> View Map </button></td></tr></table></div>";
+	$('body').html(html);
 
-	var score = word.getDifficulty();
-	var wordScoreDiv = $('#wordScoreDiv');
-	wordScoreDiv.html(Number((score).toFixed(4)));
+
 }
 
-function initializeClassic() {
-	displayWord('learn');
-	displayWord('aspect');
-	displayWord('variety');
-	displayWord('guide');
-	displayWord('crack');
-	displayWord('rent');
+RpgManager.prototype.setZone = function(zone) {
+	this.zone = zone;
 
-
-
-	wordList = $.unique(wordList.match(/\w+/mg));
-
-	setWordObjectList(wordList);
-
-	getNewWord();
-}
-
-function setMode (newMode) {
-	mode = newMode;
-	if (mode == "classic") {
-		initializeClassic();
-	} else if (mode == 'rpg') {
-		rpgManager.initialize();
+	if (zone == "plains") {
+		$('body').css({"background-image": "url('img/plains.png')"});
+		var monsters = "<div style='float:left; margin-right:50px;'><img src='img/cow.png' /></div><div style='float:left'><img src='img/cow.png' /></div>";
+		var html = "<div style='margin-top:500px; margin-left:500px'>" + monsters + "</div>";
+		$('body').html(html);
 	}
 }
 
-function createArray(length) {
-	var a = new Array(length || 0);
+RpgManager.prototype.goToMap = function() {
+	$('body').css({"background-image": "url('img/map.png')"});
 
-	if (arguments.length > 1) {
-	var args = Array.prototype.slice.call(arguments, 1);
-		for (var i = 0; i < length; i++) {
-			a[i] = createArray.apply(this, args);
-		}
-	}
-
-return a;
-}
-
-//********************************************************************** PAGE LOADED *********************************************************************
-
-var mode = "classic";
-var rpgManager = new RpgManager();
-var controller = new Controller();
-
-$(document).ready( function() {
-	$(document).keypress(function(event) { return sendKeyStroke(event) });
-	$(document).keydown(function(event) { return cancelBackspace(event) });
-	controller.init(wordList);
-	setMode(mode);
-
-//	$(document).keyup(function(event) { return false });
-});
-
-function displayWord (word) {
-	console.log("Word score of " + word + " = " + controller.getWordScore(word));
-}
-
-function setMode (newMode) {
-	mode = newMode;
-	if (mode == 'rpg') {
-		rpgManager.initialize();
-	}
-}
-
-function sendKeyStroke (event) {
-	//console.log("key: " + event.keyCode);
-	controller.receiveKey(event.keyCode);
-	return false;
-}
-
-function cancelBackspace (event) {
-	//console.log("key: " + event.keyCode);
-	if (event.keyCode == 8 || event.keyCode == 9) {
-		controller.receiveKey(event.keyCode);
-		return false;
-	}
+	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
+	$('body').html(html);
 }

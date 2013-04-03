@@ -1,0 +1,618 @@
+function Timer() {
+    this.gameTime = 0;
+    this.maxStep = 0.05;
+    this.lastTime = 0;
+}
+
+Timer.prototype.tick = function() {
+    var currentTime = Date.now();
+    var deltaTime = (currentTime - this.lastTime);
+    this.lastTime = currentTime;
+
+    return deltaTime;
+}
+var timer = new Timer();
+
+/*
+function Mistake (letter, previous, time, typedLetter) {
+	this.current = letter;
+	this.previous = letter;
+	this.time = time;
+	this.typedLetter = typedLetter;
+}
+
+function Letter (letter, time, previous, position) {
+	this.current = letter;
+	this.time = time;
+	this.previous = previous;
+	this.position = position;
+}
+
+function Word (word, timeBefore, time) {
+	this.current = word;
+	this.timeBefore = timeBefore;
+	this.time = time;
+}
+*/
+function Key () {
+	this.totalTime = 0;
+	this.count = 0;
+	this.letterTimings = [];
+	this.averageTime = 0;
+}
+
+Key.prototype.setLetterTiming = function (time) {
+	if (time > 400)
+		return;
+	this.count++;
+	this.totalTime += time;
+	this.averageTime = this.totalTime / this.count;
+}
+
+function LetterRank (score, finger, row) {
+	this.score = score;
+	this.finger = finger;
+	this.row = row;
+
+	this.digraph = [];
+}
+
+function Word () 
+{
+	this.content = "";
+	this.difficulty = 0;
+}
+
+Word.prototype.setDifficulty = function (difficulty)
+{
+	this.difficulty = difficulty;
+}
+
+Word.prototype.getDifficulty = function ()
+{
+	return this.difficulty;
+}
+
+Word.prototype.setContent = function(word)
+{
+	this.content = word;
+}
+
+Word.prototype.toString = function()
+{
+	return this.content;
+}
+
+<<<<<<< HEAD
+var dvorak = [];
+dvorak[0] = 10;
+dvorak[1] = 25;
+dvorak[2] = 7;
+dvorak[3] = 15;
+dvorak[4] = 12;
+dvorak[5] = 5;
+dvorak[6] = 6;
+dvorak[7] = 16;
+dvorak[8] = 14;
+dvorak[9] = 22;
+dvorak[10] = 23;
+dvorak[11] = 9;
+dvorak[12] = 26;
+dvorak[13] = 18;
+dvorak[14] = 11;
+dvorak[15] = 3;
+dvorak[16] = 21;
+dvorak[17] = 8;
+dvorak[18] = 19;
+dvorak[19] = 17;
+dvorak[20] = 13;
+dvorak[21] = 28;
+dvorak[22] = 27;
+dvorak[23] = 24;
+dvorak[24] = 4;
+dvorak[25] = 29;
+
+//*****************************************************************************************************************************************************************
+//******************************************************************* CONTROLLER **********************************************************************************
+//*****************************************************************************************************************************************************************
+function Controller() {
+	this.lettersTyped = [];
+	this.wordsType = [];
+	this.mistakes = [];
+
+	this.letterList = [];
+
+	this.currentWord;
+	this.nextWord;
+	this.currentPosition = 0;
+	this.letterStreak = 0;
+	this.currentLetter = ' ';
+	this.firstLetter = true;
+
+	this.session = new UserSession();
+	this.wordObjectList = [];
+	this.timer = new Timer();
+}
+
+Controller.prototype.init = function(wordList) {
+
+	for (var i = 0; i < 26; i++) {
+		this.letterList[i] = new Key();
+	}
+
+	displayWord('treat');
+	displayWord('against');
+	displayWord('break');
+	displayWord('pasta');
+	displayWord('cope');
+	displayWord('jaw');
+
+	var wordList = $.unique(wordList.match(/\w+/mg));
+
+	this.setWordObjectList(wordList);
+
+	this.getNewWord();
+}
+
+//Initiate the list of all words that can be used
+Controller.prototype.setWordObjectList = function(wordsList) {
+	var that = this;
+=======
+var keyboardList = [];
+keyboardList[0] = new LetterRank(2.0, 1, 1);	// q
+keyboardList[1] = new LetterRank(1.4, 2, 1);	// w 
+keyboardList[2] = new LetterRank(1.3, 3, 1);	// e 
+keyboardList[3] = new LetterRank(1.1, 4, 1);	// r
+keyboardList[4] = new LetterRank(1.3, 4, 1);	// t
+keyboardList[5] = new LetterRank(1.3, 9, 1);	// y
+keyboardList[6] = new LetterRank(1.1, 9, 1);	// u
+keyboardList[7] = new LetterRank(1.3, 8, 1);	// i
+keyboardList[8] = new LetterRank(1.4, 7, 1);	// o
+keyboardList[9] = new LetterRank(2.0, 6, 1);	// p
+
+keyboardList[10] = new LetterRank(1.5, 1, 2);	// a
+keyboardList[11] = new LetterRank(1.2, 2, 2);	// s
+keyboardList[12] = new LetterRank(1.1, 3, 2);	// d
+keyboardList[13] = new LetterRank(1.0, 4, 2);	// f
+keyboardList[14] = new LetterRank(1.0, 4, 2);	// g
+keyboardList[15] = new LetterRank(1.0, 9, 2);	// h
+keyboardList[16] = new LetterRank(1.0, 9, 2);	// j
+keyboardList[17] = new LetterRank(1.1, 8, 2);	// k
+keyboardList[18] = new LetterRank(1.2, 7, 2);	// l
+keyboardList[19] = new LetterRank(1.5, 6, 2);	// ;
+
+keyboardList[20] = new LetterRank(2.5, 1, 3);	// z
+keyboardList[21] = new LetterRank(2.0, 2, 3);	// x
+keyboardList[22] = new LetterRank(1.7, 3, 3);	// c
+keyboardList[23] = new LetterRank(1.2, 4, 3);	// v
+keyboardList[24] = new LetterRank(1.2, 4, 3);	// b
+keyboardList[25] = new LetterRank(1.2, 9, 3);	// n
+keyboardList[26] = new LetterRank(1.2, 9, 3);	// m
+keyboardList[27] = new LetterRank(1.7, 8, 3);	// ,
+keyboardList[28] = new LetterRank(1.7, 7, 3);	// .
+keyboardList[29] = new LetterRank(2.5, 6, 3);	// /
+
+//determine difficulty of digraph for the key BEFORE this key
+// P
+keyboardList[9].digraph[5] = 1.4;
+keyboardList[9].digraph[6] = 1.3;
+keyboardList[9].digraph[7] = 1.5;
+keyboardList[9].digraph[8] = 1.7;
+keyboardList[9].digraph[9] = 0.0;			//same key
+keyboardList[9].digraph[15] = 1.2;
+keyboardList[9].digraph[16] = 1.3;
+keyboardList[9].digraph[17] = 1.5;
+keyboardList[9].digraph[18] = 1.8;
+keyboardList[9].digraph[19] = 2.2;
+keyboardList[9].digraph[25] = 1.2;
+keyboardList[9].digraph[26] = 1.4;
+keyboardList[9].digraph[27] = 2.0;
+keyboardList[9].digraph[28] = 2.2;
+keyboardList[9].digraph[29] = 2.5;
+
+// O
+keyboardList[9].digraph[5] = 1.4;
+keyboardList[9].digraph[6] = 1.3;
+keyboardList[9].digraph[7] = 1.5;
+keyboardList[9].digraph[8] = 0.0;			//same key
+keyboardList[9].digraph[9] = 2.2;
+keyboardList[9].digraph[15] = 1.3;
+keyboardList[9].digraph[16] = 1.2;
+keyboardList[9].digraph[17] = 1.6;
+keyboardList[9].digraph[18] = 2.0;
+keyboardList[9].digraph[19] = 2.0;
+keyboardList[9].digraph[25] = 1.4;
+keyboardList[9].digraph[26] = 1.5;
+keyboardList[9].digraph[27] = 2.0;
+keyboardList[9].digraph[28] = 2.3;
+keyboardList[9].digraph[29] = 2.3;
+
+var dvorakLetterList = [];
+dvorakLetterList[0] = keyboardList[10];
+dvorakLetterList[1] = keyboardList[25];
+dvorakLetterList[2] = keyboardList[7];
+dvorakLetterList[3] = keyboardList[15];
+dvorakLetterList[4] = keyboardList[12];
+dvorakLetterList[5] = keyboardList[5];
+dvorakLetterList[6] = keyboardList[6];
+dvorakLetterList[7] = keyboardList[16];
+dvorakLetterList[8] = keyboardList[14];
+dvorakLetterList[9] = keyboardList[22];
+dvorakLetterList[10] = keyboardList[23];
+dvorakLetterList[11] = keyboardList[9];
+dvorakLetterList[12] = keyboardList[26];
+dvorakLetterList[13] = keyboardList[18];
+dvorakLetterList[14] = keyboardList[11];
+dvorakLetterList[15] = keyboardList[3];
+dvorakLetterList[16] = keyboardList[21];
+dvorakLetterList[17] = keyboardList[8];
+dvorakLetterList[18] = keyboardList[19];
+dvorakLetterList[19] = keyboardList[17];
+dvorakLetterList[20] = keyboardList[13];
+dvorakLetterList[21] = keyboardList[28];
+dvorakLetterList[22] = keyboardList[27];
+dvorakLetterList[23] = keyboardList[24];
+dvorakLetterList[24] = keyboardList[4];
+dvorakLetterList[25] = keyboardList[29];
+
+var lettersTyped = [];
+var wordsType = [];
+var mistakes = [];
+
+var letterList = [];
+for (var i = 0; i < 26; i++) {
+	letterList[i] = new Key();
+}
+
+var globalWord;
+var globalNextWord;
+var currentPosition = 0;
+var letterStreak = 0;
+var lastLetter = ' ';
+var firstLetter = true;
+
+var thisSession = new UserSession();
+var wordObjectList = [];
+
+var mode = "rpg";
+var rpgManager;
+
+function setWordObjectList(wordsList)
+{
+>>>>>>> ben
+	$.each(wordsList, function (index, element) {
+		var currWord = new Word();
+
+		currWord.setContent(element);
+		currWord.setDifficulty(that.getWordScore(element));
+
+		that.wordObjectList.push(currWord);
+	});
+}
+
+//Grab a new word from the list of total words and set it as the next word to use
+Controller.prototype.getNewWord = function() {
+	var _nextWord = this.getUnusedWord();
+
+	var wordToUse = this.nextWord;
+
+<<<<<<< HEAD
+	this.setNextWord(_nextWord);
+
+	//The first time there will not be a word in the next div, so give a new random one
+	if (wordToUse == undefined) {
+		wordToUse = this.getUnusedWord();
+=======
+$(document).ready( function() {
+	if (mode == "classic") {
+		$(document).keypress(function(event) { return sendKeyStroke(event) });
+		$(document).keydown(function(event) { return cancelBackspace(event) });
+		initializeClassic();
+	} else if (mode == "rpg") {
+		rpgManager = new RpgManager();
+		rpgManager.initialize();
+		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
+>>>>>>> ben
+	}
+	
+//	$(document).keyup(function(event) { return false });
+});
+
+	this.setWord(wordToUse);
+	this.session.addWord(wordToUse);
+}
+
+Controller.prototype.setNextWord = function(word) {
+	this.nextWord = word;
+	$("#nextWord").html(word.toString());
+}
+
+//Get a word that has not been used yet from the word object list
+Controller.prototype.getUnusedWord = function() {
+	var randomInt = Math.floor(Math.random() * this.wordObjectList.length);
+	var unusedWord = this.wordObjectList[randomInt];
+
+	var isWordUsed = this.session.checkWordUsed(unusedWord);
+
+	//Only try to find an unused word if there are any left
+	if(this.session.getWordUsedLength < this.wordObjectList.length) {
+		while (isWordUsed) {
+			//get a new word if the word is used
+			randomInt = Math.floor(Math.random() * this.wordObjectList.length);
+			unusedWord = this.wordObjectList[randomInt];
+			isWordUsed = this.session.checkWordUsed(unusedWord);
+		}
+	}
+
+	return unusedWord;
+}
+
+//Set the word onto page for the user to type
+Controller.prototype.setWord = function(word) {
+	this.currentWord = word;
+	this.currentPosition = 0;
+	var wordDiv = $('#wordDiv');
+	var wordHtml = "";
+
+	//create the individual letter spans (so they can be colored as they are typed)
+	for (var i = 0; i < word.toString().length; i++) {
+		wordHtml += '<span id="letter' + i + '">' + word.toString()[i] + '</span>';
+	};
+
+	wordDiv.html(wordHtml);
+
+	var score = word.getDifficulty();
+	var wordScoreDiv = $('#wordScoreDiv');	
+	//Set the score of the word onto the score div
+	wordScoreDiv.html(Number((score).toFixed(4)));
+}
+
+//Update the timings on the page for the individual letters typed
+Controller.prototype.displayLetterTime = function() {
+	var letterScoresDiv = $('#letterScores');
+	var html = "<table>";
+	for (var i = 0; i < 26; i++) {
+		html += "<tr><td>" + String.fromCharCode(i+97) + "</td><td>" + this.letterList[i].averageTime + "ms</td></tr>";
+	}
+	html += "</table>";
+	letterScoresDiv.html(html);
+}
+
+//Record a key that was typed, and add the timing to the letter list
+Controller.prototype.recordLetter = function(letter, previous, time) {
+	var index = letter.charCodeAt(0)-97;
+	this.letterList[index].setLetterTiming(time);
+	this.displayLetterTime();
+}
+
+Controller.prototype.advancePosition = function() {
+	this.currentPosition++;
+	this.session.addStreak();
+
+	if (this.currentPosition >= this.currentWord.toString().length) {
+		this.session.addScore(this.currentWord.getDifficulty());
+		this.getNewWord();
+	}
+}
+
+Controller.prototype.getWordScore = function(word) {
+	var letters = [];
+	var previousFinger = -1;
+	var previousRow = 0;
+	var previousLetter = -1;
+	var previousHand = 0;
+	var sum = 0;
+	var handDuration = 1;
+
+	for (var i = 0; i < 26; i++) {
+		//for each letter
+		
+	}
+	for (var i = 0; i < word.length; i++) {
+
+	}
+
+	for (var i = 0; i < word.length; i++) {
+		var letter = word[i];
+		var letterCode = letter.charCodeAt(0)-97;
+		var score = keyboardList[dvorak[letterCode]].score;
+		var row = keyboardList[dvorak[letterCode]].row;
+		var finger = keyboardList[dvorak[letterCode]].finger;
+		var hand = (finger < 5) ? 1 : 2;
+
+		//add word length difficulty modifier
+		score += .07*i;
+
+		if (previousHand == hand) {
+			if (previousLetter >= 0) {
+				//add digraph difficulty
+				score += keyboardList[dvorak[letterCode]].digraph[dvorak[previousLetter]];
+			}
+
+			//harder the longer its on the same hand
+			handDuration++;
+			score += handDuration*handDuration*.1; 
+		} else {
+			handDuration = 1;
+			//add default difficulty
+			score += 0.9;
+		}
+
+		letters[i] = score;
+		sum += score;
+
+		previousFinger = finger;
+		previousLetter = letterCode;
+		previousRow = row;
+		previousHand = hand;
+	}
+
+	var finalScore = sum / letters.length;
+
+	for (var i = 0; i < 26; i++) {
+		//for each letter check its frequency
+		var count = 0;
+		
+		for (var k = 0; k < word.length; k++) {
+			if ((word.charCodeAt(k)-97) == i) {
+				count++;
+			}
+		}
+
+
+		if (count > 2) {
+			//the more occurances there are of the same letter, add more difficulty
+			finalScore += .2 * count;
+		}
+	}
+
+	return finalScore;
+}
+
+Controller.prototype.receiveKey = function(key) {
+	var typedLetter = String.fromCharCode(key);
+	var nextLetter = this.currentWord.toString()[this.currentPosition];
+	var clockTick = this.timer.tick();
+
+	var word = getNextWord();
+
+	setNextWord(nextWord);
+
+	//The first time there will not be a word in the next div, so give a new random one
+	if (word == undefined)
+	{
+		word = getUnusedWord();
+	}
+
+	setWord(word);
+	thisSession.addWord(word);
+}
+
+function getUnusedWord()
+{
+	var randomInt = Math.floor(Math.random() * wordObjectList.length);
+	var unusedWord = wordObjectList[randomInt];
+
+	var used = thisSession.checkWordUsed(unusedWord);
+
+	//Only try to find an unused word if there are any left
+	if(thisSession.getWordUsedLength < wordObjectList.length)
+	{
+		while (used)
+		{
+			randomInt = Math.floor(Math.random() * wordObjectList.length);
+			unusedWord = wordObjectList[randomInt];
+			used = thisSession.checkWordUsed(unusedWord);
+		}
+	}
+
+	return unusedWord;
+}
+
+function sendKeyStroke (event) {
+	//console.log("key: " + event.keyCode);
+	receiveKey(event.keyCode);
+	return false;
+}
+
+function cancelBackspace (event) {
+	//console.log("key: " + event.keyCode);
+	if (event.keyCode == 8 || event.keyCode == 9) {
+		receiveKey(event.keyCode);
+		return false;
+	}
+}
+
+function receiveKey (key) {
+	var typedLetter = String.fromCharCode(key);
+	var nextLetter = globalWord.toString()[currentPosition];
+	var clockTick = timer.tick();
+	if (typedLetter == nextLetter) {
+		this.recordLetter(typedLetter, this.currentLetter, clockTick);
+		//var _letter = new Letter(typedLetter, clockTick, currentLetter, currentPosition);
+		//lettersTyped.push(_letter);
+
+		var letterDiv = $('#letter'+this.currentPosition);
+		letterDiv.css("color", "red");
+		this.currentLetter = nextLetter;
+		this.session.addCorrectLetter();
+		this.advancePosition();
+	} else {
+		//var _mistake = new Mistake(nextLetter, currentLetter, clockTick, typedLetter);
+		//mistakes.push(_mistake);
+		this.session.addMissedLetter();
+		this.session.resetStreak();
+	}
+
+	$("#stats").html(this.session.toString());
+}
+
+function setNextWord (word) {
+	globalNextWord = word;
+	$("#nextWord").html(word.toString());
+}
+
+<<<<<<< HEAD
+//*****************************************************************************************************************************************************************
+//****************************************************************** RPG MANAGER **********************************************************************************
+//*****************************************************************************************************************************************************************
+=======
+function getNextWord () {
+	return globalNextWord;
+}
+
+function setWord (word) {
+	globalWord = word;
+	currentPosition = 0;
+	var wordDiv = $('#wordDiv');
+	var wordHtml = "";
+	for (var i = 0; i < word.toString().length; i++) {
+		wordHtml += '<span id="letter' + i + '">' + word.toString()[i] + '</span>';
+	};
+
+	wordDiv.html(wordHtml);
+
+	var score = word.getDifficulty();
+	var wordScoreDiv = $('#wordScoreDiv');
+	wordScoreDiv.html(Number((score).toFixed(4)));
+}
+
+function initializeClassic() {
+	displayWord('learn');
+	displayWord('aspect');
+	displayWord('variety');
+	displayWord('guide');
+	displayWord('crack');
+	displayWord('rent');
+
+
+
+	wordList = $.unique(wordList.match(/\w+/mg));
+
+	setWordObjectList(wordList);
+
+	getNewWord();
+}
+
+function setMode (newMode) {
+	mode = newMode;
+	if (mode == "classic") {
+		initializeClassic();
+	} else if (mode == 'rpg') {
+		rpgManager.initialize();
+	}
+}
+
+function createArray(length) {
+	var a = new Array(length || 0);
+>>>>>>> ben
+
+	if (arguments.length > 1) {
+	var args = Array.prototype.slice.call(arguments, 1);
+		for (var i = 0; i < length; i++) {
+			a[i] = createArray.apply(this, args);
+		}
+	}
+
+return a;
+}
