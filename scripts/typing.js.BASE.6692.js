@@ -11,29 +11,7 @@ Timer.prototype.tick = function() {
 
     return deltaTime;
 }
-var timer = new Timer();
 
-/*
-function Mistake (letter, previous, time, typedLetter) {
-	this.current = letter;
-	this.previous = letter;
-	this.time = time;
-	this.typedLetter = typedLetter;
-}
-
-function Letter (letter, time, previous, position) {
-	this.current = letter;
-	this.time = time;
-	this.previous = previous;
-	this.position = position;
-}
-
-function Word (word, timeBefore, time) {
-	this.current = word;
-	this.timeBefore = timeBefore;
-	this.time = time;
-}
-*/
 function Key () {
 	this.totalTime = 0;
 	this.count = 0;
@@ -131,7 +109,6 @@ function Controller() {
 	this.session = new UserSession();
 	this.wordObjectList = [];
 	this.timer = new Timer();
-	this.layout = "dvorak";
 }
 
 Controller.prototype.init = function(wordList) {
@@ -179,9 +156,6 @@ Controller.prototype.getNewWord = function() {
 	if (wordToUse == undefined) {
 		wordToUse = this.getUnusedWord();
 	}
-	
-//	$(document).keyup(function(event) { return false });
-});
 
 	this.setWord(wordToUse);
 	this.session.addWord(wordToUse);
@@ -269,20 +243,12 @@ Controller.prototype.getWordScore = function(word) {
 	var sum = 0;
 	var handDuration = 1;
 
-	for (var i = 0; i < 26; i++) {
-		//for each letter
-		
-	}
-	for (var i = 0; i < word.length; i++) {
-
-	}
-
 	for (var i = 0; i < word.length; i++) {
 		var letter = word[i];
 		var letterCode = letter.charCodeAt(0)-97;
-		var score = keyboardList[this.convert(letterCode)].score;
-		var row = keyboardList[this.convert(letterCode)].row;
-		var finger = keyboardList[this.convert(letterCode)].finger;
+		var score = keyboardList[dvorak[letterCode]].score;
+		var row = keyboardList[dvorak[letterCode]].row;
+		var finger = keyboardList[dvorak[letterCode]].finger;
 		var hand = (finger < 5) ? 1 : 2;
 
 		//add word length difficulty modifier
@@ -291,7 +257,7 @@ Controller.prototype.getWordScore = function(word) {
 		if (previousHand == hand) {
 			if (previousLetter >= 0) {
 				//add digraph difficulty
-				score += keyboardList[this.convert(letterCode)].digraph[this.convert(previousLetter)];
+				score += keyboardList[dvorak[letterCode]].digraph[dvorak[previousLetter]];
 			}
 
 			//harder the longer its on the same hand
@@ -339,59 +305,6 @@ Controller.prototype.receiveKey = function(key) {
 	var nextLetter = this.currentWord.toString()[this.currentPosition];
 	var clockTick = this.timer.tick();
 
-	var word = getNextWord();
-
-	setNextWord(nextWord);
-
-	//The first time there will not be a word in the next div, so give a new random one
-	if (word == undefined)
-	{
-		word = getUnusedWord();
-	}
-
-	setWord(word);
-	thisSession.addWord(word);
-}
-
-function getUnusedWord()
-{
-	var randomInt = Math.floor(Math.random() * wordObjectList.length);
-	var unusedWord = wordObjectList[randomInt];
-
-	var used = thisSession.checkWordUsed(unusedWord);
-
-	//Only try to find an unused word if there are any left
-	if(thisSession.getWordUsedLength < wordObjectList.length)
-	{
-		while (used)
-		{
-			randomInt = Math.floor(Math.random() * wordObjectList.length);
-			unusedWord = wordObjectList[randomInt];
-			used = thisSession.checkWordUsed(unusedWord);
-		}
-	}
-
-	return unusedWord;
-}
-
-function sendKeyStroke (event) {
-	//console.log("key: " + event.keyCode);
-	receiveKey(event.keyCode);
-	return false;
-}
-
-function cancelBackspace (event) {
-	//console.log("key: " + event.keyCode);
-	if (event.keyCode == 8 || event.keyCode == 9) {
-		receiveKey(event.keyCode);
-		return false;
-	}
-}
-
-function receiveKey (key) {
-	var typedLetter = String.fromCharCode(key);
-	var nextLetter = globalWord.toString()[currentPosition];
-	var clockTick = timer.tick();
 	if (typedLetter == nextLetter) {
 		this.recordLetter(typedLetter, this.currentLetter, clockTick);
 		//var _letter = new Letter(typedLetter, clockTick, currentLetter, currentPosition);
@@ -412,20 +325,6 @@ function receiveKey (key) {
 	$("#stats").html(this.session.toString());
 }
 
-<<<<<<< HEAD
-Controller.prototype.convert = function(index) {
-	if (this.layout == "dvorak") {
-		return dvorak[index];
-	} else {
-		//its qwerty
-		return index;
-	}
-=======
-function setNextWord (word) {
-	globalNextWord = word;
-	$("#nextWord").html(word.toString());
->>>>>>> cbd711709af9c43313091330279630a15f3d40a1
-}
 
 //*****************************************************************************************************************************************************************
 //****************************************************************** RPG MANAGER **********************************************************************************
@@ -461,7 +360,6 @@ RpgManager.prototype.goToMap = function() {
 
 	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
 	$('body').html(html);
-<<<<<<< HEAD
 }
 
 
@@ -478,15 +376,7 @@ $(document).ready( function() {
 	controller.init(wordList);
 	setMode(mode);
 	
-
-
-	// When clicking on the button close or the mask layer the popup closed
-	$('a.close, #mask').live('click', function() { 
-		$('#mask , .keyboard-popup').fadeOut(300 , function() {
-			$('#mask').remove();  
-		}); 
-		return false;
-	});
+//	$(document).keyup(function(event) { return false });
 });
 
 function displayWord (word) {
@@ -512,37 +402,4 @@ function cancelBackspace (event) {
 		controller.receiveKey(event.keyCode);
 		return false;
 	}
-}
-
-function chooseKeyboard(layout) {
-	controller.keyboardLayout = layout;
-
-	$('#mask , .keyboard-popup').fadeOut(300 , function() {
-		$('#mask').remove();  
-	});
-}
-
-function openKeyboardLayout() {
-	// Getting the variable's value from a link 
-	var keyboardBox = "#keyboard-box";
-
-	// Fade in the Popup
-	$(keyboardBox).fadeIn(300);
-
-	// Set the center alignment padding + border see css style
-	var popMargTop = ($(keyboardBox).height() + 24) / 2; 
-	var popMargLeft = ($(keyboardBox).width() + 24) / 2; 
-
-	$(keyboardBox).css({ 
-		'margin-top' : -popMargTop,
-		'margin-left' : -popMargLeft
-	});
-
-	// Add the mask to body
-	$('body').append('<div id="mask"></div>');
-	$('#mask').fadeIn(300);
-
-	return false;
-=======
->>>>>>> cbd711709af9c43313091330279630a15f3d40a1
 }

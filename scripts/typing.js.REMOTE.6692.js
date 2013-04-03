@@ -131,7 +131,6 @@ function Controller() {
 	this.session = new UserSession();
 	this.wordObjectList = [];
 	this.timer = new Timer();
-	this.layout = "dvorak";
 }
 
 Controller.prototype.init = function(wordList) {
@@ -280,9 +279,9 @@ Controller.prototype.getWordScore = function(word) {
 	for (var i = 0; i < word.length; i++) {
 		var letter = word[i];
 		var letterCode = letter.charCodeAt(0)-97;
-		var score = keyboardList[this.convert(letterCode)].score;
-		var row = keyboardList[this.convert(letterCode)].row;
-		var finger = keyboardList[this.convert(letterCode)].finger;
+		var score = keyboardList[dvorak[letterCode]].score;
+		var row = keyboardList[dvorak[letterCode]].row;
+		var finger = keyboardList[dvorak[letterCode]].finger;
 		var hand = (finger < 5) ? 1 : 2;
 
 		//add word length difficulty modifier
@@ -291,7 +290,7 @@ Controller.prototype.getWordScore = function(word) {
 		if (previousHand == hand) {
 			if (previousLetter >= 0) {
 				//add digraph difficulty
-				score += keyboardList[this.convert(letterCode)].digraph[this.convert(previousLetter)];
+				score += keyboardList[dvorak[letterCode]].digraph[dvorak[previousLetter]];
 			}
 
 			//harder the longer its on the same hand
@@ -412,19 +411,9 @@ function receiveKey (key) {
 	$("#stats").html(this.session.toString());
 }
 
-<<<<<<< HEAD
-Controller.prototype.convert = function(index) {
-	if (this.layout == "dvorak") {
-		return dvorak[index];
-	} else {
-		//its qwerty
-		return index;
-	}
-=======
 function setNextWord (word) {
 	globalNextWord = word;
 	$("#nextWord").html(word.toString());
->>>>>>> cbd711709af9c43313091330279630a15f3d40a1
 }
 
 //*****************************************************************************************************************************************************************
@@ -461,88 +450,4 @@ RpgManager.prototype.goToMap = function() {
 
 	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
 	$('body').html(html);
-<<<<<<< HEAD
-}
-
-
-
-//********************************************************************** PAGE LOADED *********************************************************************
-
-var mode = "classic";
-var rpgManager = new RpgManager();
-var controller = new Controller();
-
-$(document).ready( function() {
-	$(document).keypress(function(event) { return sendKeyStroke(event) });
-	$(document).keydown(function(event) { return cancelBackspace(event) });
-	controller.init(wordList);
-	setMode(mode);
-	
-
-
-	// When clicking on the button close or the mask layer the popup closed
-	$('a.close, #mask').live('click', function() { 
-		$('#mask , .keyboard-popup').fadeOut(300 , function() {
-			$('#mask').remove();  
-		}); 
-		return false;
-	});
-});
-
-function displayWord (word) {
-	console.log("Word score of " + word + " = " + controller.getWordScore(word));
-}
-
-function setMode (newMode) {
-	mode = newMode;
-	if (mode == 'rpg') {
-		rpgManager.initialize();
-	}
-}
-
-function sendKeyStroke (event) {
-	//console.log("key: " + event.keyCode);
-	controller.receiveKey(event.keyCode);
-	return false;
-}
-
-function cancelBackspace (event) {
-	//console.log("key: " + event.keyCode);
-	if (event.keyCode == 8 || event.keyCode == 9) {
-		controller.receiveKey(event.keyCode);
-		return false;
-	}
-}
-
-function chooseKeyboard(layout) {
-	controller.keyboardLayout = layout;
-
-	$('#mask , .keyboard-popup').fadeOut(300 , function() {
-		$('#mask').remove();  
-	});
-}
-
-function openKeyboardLayout() {
-	// Getting the variable's value from a link 
-	var keyboardBox = "#keyboard-box";
-
-	// Fade in the Popup
-	$(keyboardBox).fadeIn(300);
-
-	// Set the center alignment padding + border see css style
-	var popMargTop = ($(keyboardBox).height() + 24) / 2; 
-	var popMargLeft = ($(keyboardBox).width() + 24) / 2; 
-
-	$(keyboardBox).css({ 
-		'margin-top' : -popMargTop,
-		'margin-left' : -popMargLeft
-	});
-
-	// Add the mask to body
-	$('body').append('<div id="mask"></div>');
-	$('#mask').fadeIn(300);
-
-	return false;
-=======
->>>>>>> cbd711709af9c43313091330279630a15f3d40a1
 }
