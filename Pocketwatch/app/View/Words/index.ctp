@@ -7,6 +7,7 @@
     </tr>
 
     <!-- Here is where we loop through our $posts array, printing out post info -->
+    <?phpecho $this->Session->flash(); ?>
 
     <?php foreach ($words as $word): ?>
     <tr>
