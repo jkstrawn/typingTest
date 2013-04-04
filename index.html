@@ -11,7 +11,14 @@
 		<script src="scripts/jQuery/jquery-ui.js"></script>
 		<script src="scripts/UserSession.js"></script>
 		<script src="scripts/wordList.js"></script>
+		<script src="scripts/rpg/Entity.js"></script>
+		<script src="scripts/rpg/Tile.js"></script>
+		<script src="scripts/rpg/World.js"></script>
+		<script src="scripts/rpg/Menu.js"></script>
+		<script src="scripts/rpg/RpgManager.js"></script>
 		<script src="scripts/typing.js"></script>
+		<script src="scripts/keyboardList.js"></script>
+		<script src="scripts/rpg/Encounter.js"></script>
 	</head>
 	<body>
 		<div id="main">
@@ -38,6 +45,20 @@
 		</div>
 
 		<div id="wordScoreDiv">00</div>
+
+		<div id="keyboard">
+			<input type="button" value="Choose Layout" onclick="openKeyboardLayout();">
+			Layout: Dvorak
+		</div>
+
+		<div id="keyboard-box" class="keyboard-popup">
+			<div id="keyboardSub">
+				<h3>keyboard</h3>
+				</br>
+				<input type="button" value="Dvorak" onclick="chooseKeyboard('dvorak')">
+				<input type="button" value="Qwerty" onclick="chooseKeyboard('qwerty')">
+			</div>
+		</div>
 
 		<button type="button" onclick="setMode('rpg')"> RPG Mode </button>
 

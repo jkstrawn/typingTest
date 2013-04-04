@@ -1,42 +1,5 @@
 p{margin:0; padding:0}
 
-body {
-	background-repeat: no-repeat;
-}
-
-.action {
-	float: left;
-}
-
-#actions {
-	margin-top: 200px;
-	margin-left: 500px;
-}
-
-#map {
-	width: 352px;
-	height: 352px;
-}
-
-#monsters {
-	margin-top: 500px;
-	margin-left: 500px;
-}
-
-.monster {
-	float: left;
-	margin-right: 50px;
-	height: 89px;
-	width: 124px;
-}
-
-.tile {
-	float: left;
-	height: 32px;
-	width: 32px;
-	background-repeat: no-repeat;
-}
-
 #wordDiv {
 	position: absolute;
 	font-family: 'Rufina', serif;

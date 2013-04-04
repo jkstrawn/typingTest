@@ -285,7 +285,7 @@ Controller.prototype.getWordScore = function(word) {
 	for (var i = 0; i < 26; i++) {
 		//for each letter check its frequency
 		var count = 0;
-
+		
 		for (var k = 0; k < word.length; k++) {
 			if ((word.charCodeAt(k)-97) == i) {
 				count++;
@@ -336,6 +336,44 @@ Controller.prototype.convert = function(index) {
 	}
 }
 
+//*****************************************************************************************************************************************************************
+//****************************************************************** RPG MANAGER **********************************************************************************
+//*****************************************************************************************************************************************************************
+
+function RpgManager() {
+	var zone = "";
+	var character = "";
+}
+
+RpgManager.prototype.initialize = function() {
+	$('body').css({"background-image": "url('img/home.png')", "background-repeat": "no-repeat"});
+
+	var html = "<div id='actions' style='margin-top:200px; margin-left:500px'><table><tr><td><button type='button' onclick='rpgManager.goToMap()'> View Map </button></td></tr></table></div>";
+	$('body').html(html);
+
+
+}
+
+RpgManager.prototype.setZone = function(zone) {
+	this.zone = zone;
+
+	if (zone == "plains") {
+		$('body').css({"background-image": "url('img/plains.png')"});
+		var monsters = "<div style='float:left; margin-right:50px;'><img src='img/cow.png' /></div><div style='float:left'><img src='img/cow.png' /></div>";
+		var html = "<div style='margin-top:500px; margin-left:500px'>" + monsters + "</div>";
+		$('body').html(html);
+	}
+}
+
+RpgManager.prototype.goToMap = function() {
+	$('body').css({"background-image": "url('img/map.png')"});
+
+	var html = "<div style='margin-left:400px; margin-top:300px'><img src='img/plains-icon.png' onclick=\"rpgManager.setZone('plains')\" /></div>";
+	$('body').html(html);
+}
+
+
+
 //********************************************************************** PAGE LOADED *********************************************************************
 
 var mode = "classic";
@@ -343,16 +381,12 @@ var rpgManager = new RpgManager();
 var controller = new Controller();
 
 $(document).ready( function() {
-	if (mode == "classic") {
-		$(document).keypress(function(event) { return sendKeyStroke(event) });
-		$(document).keydown(function(event) { return cancelBackspace(event) });
-		controller.init(wordList);
-		setMode(mode);
-	} else if (mode == "rpg") {
-		rpgManager = new RpgManager();
-		rpgManager.initialize();
-		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
-	}
+	$(document).keypress(function(event) { return sendKeyStroke(event) });
+	$(document).keydown(function(event) { return cancelBackspace(event) });
+	controller.init(wordList);
+	setMode(mode);
+	
+
 
 	// When clicking on the button close or the mask layer the popup closed
 	$('a.close, #mask').live('click', function() { 
