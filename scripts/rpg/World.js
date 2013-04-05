@@ -60,7 +60,7 @@ World.prototype.getAllHtml = function() {
 	for (var i = 0; i < this.x; i++) {
 		html += "<div id='row'>"
 		for (var j = 0; j < this.y; j++) {
-			console.log(i + ", " + j);
+			//console.log(i + ", " + j);
 			if (this.indexIsOutOfBounds(i) || this.indexIsOutOfBounds(j)) {
 				html += this.getOutOfBoundsImage();
 			} else {
@@ -71,6 +71,28 @@ World.prototype.getAllHtml = function() {
 	}
 
 	html += "</div>";
+	return html;
+}
+
+World.prototype.getMinimapHtml = function() {
+	//var html = "<div style='width:" + this.x*32 + ";height:" + this.y*32 + ";overflow:scroll'>";
+	//var html = "<div style='overflow:scroll'>";
+	var html = "";
+
+	for (var i = 0; i < this.x; i++) {
+		html += "<div id='row'>"
+		for (var j = 0; j < this.y; j++) {
+			//console.log(i + ", " + j);
+			if (this.indexIsOutOfBounds(i) || this.indexIsOutOfBounds(j)) {
+				html += this.getOutOfBoundsImage();
+			} else {
+				html += this.tiles[i][j].getImageWithSize(j, i, 10, 10);
+			}
+		}
+		html += "</div>";
+	}
+
+	//html += "</div>";
 	return html;
 }
 

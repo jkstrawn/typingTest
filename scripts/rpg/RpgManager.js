@@ -7,8 +7,9 @@ function RpgManager() {
 	this.zones = [];
 	this.zone = "";
 	this.character = "";
-	this.world = new World();
+	this.world = new World(20, 20);
 	this.menu = new Menu();
+	this.editor = new Editor(this.world);
 	this.encounter = null;
 	this.state = "menu";
 	
@@ -38,6 +39,47 @@ RpgManager.prototype.sendKey = function(event) {
 			this.encounter.receiveKey(event.keyCode);
 		}
 		return false;
+	} else if (this.state == "editor") {
+		this.editor.receiveKey(event.keyCode);
+		return false;
+	}
+}
+
+RpgManager.prototype.sendKeyDown = function(event) {
+	if (this.state == "menu") {
+		return false;
+	} else if (this.state == "world") {
+		return false;
+	} else if (this.state == "encounter") {
+		return false;
+	} else if (this.state == "editor") {
+		this.editor.receiveKeyDown(event);
+		return false;
+	}
+}
+
+RpgManager.prototype.sendKeyUp = function(event) {
+	if (this.state == "menu") {
+		return false;
+	} else if (this.state == "world") {
+		return false;
+	} else if (this.state == "encounter") {
+		return false;
+	} else if (this.state == "editor") {
+		this.editor.receiveKeyUp(event);
+		return false;
+	}
+}
+
+RpgManager.prototype.sendMouseUp = function(event) {
+	if (this.state == "menu") {
+
+	} else if (this.state == "world") {
+		
+	} else if (this.state == "encounter") {
+		
+	} else if (this.state == "editor") {
+		this.editor.receiveMouseUp(event);
 	}
 }
 
@@ -67,4 +109,11 @@ RpgManager.prototype.clearEncounter = function() {
 	this.encounter = null;
 	this.state = "world";
 	this.world.draw();
+}
+
+RpgManager.prototype.goToEditor = function() {
+	$('body').css({"background-image": "none"});
+
+	this.state = "editor";
+	this.editor.draw();
 }

@@ -133,3 +133,8 @@ Character.prototype.getY = function() {
 Character.prototype.getImageWithCoords = function(x, y) {
 	return "<img style='float:left' src='" + this.sprite + "'/>";
 }
+
+Character.prototype.getImageWithSize = function(x, y) {
+	//$("<img />").attr("height", 10).attr("width", 10).html
+	return "<img style='float:left' height='10' width='10' src='" + this.sprite + "'/>";
+}

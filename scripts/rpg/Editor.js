@@ -57,6 +57,54 @@ Editor.prototype.receiveKey = function(key) {
 	}
 }
 
+Editor.prototype.receiveKeyDown = function(e) {
+	var typedLetter = String.fromCharCode(e.keyCode);
+	if (e.keyCode == 17) {
+		console.log("control pressed.");
+	} else if (typedLetter == 'W') {
+		console.log("got w.");
+		var wrapper = document.getElementsByClassName("jeremy")[0];
+		this.offsetY -= 10;
+		if (this.offsetY < 0)
+			this.offsetY = 0;
+		wrapper.scrollTop = this.offsetY;
+
+    	//wrapper.scrollTop(wrapper.scrollTop() - 1);
+	} else if (typedLetter == 'A') {
+		console.log("got a.");
+		var wrapper = document.getElementsByClassName("jeremy")[0];
+		this.offsetX -= 10;
+		if (this.offsetX < 0)
+			this.offsetX = 0;
+		wrapper.scrollLeft = this.offsetX;
+
+	} else if (typedLetter == 'S') {
+		console.log("got s.");
+		var wrapper = document.getElementsByClassName("jeremy")[0];
+		this.offsetY += 10;
+		wrapper.scrollTop = this.offsetY;
+
+    	//wrapper.scrollTop(wrapper.scrollTop() + 1);
+
+	} else if (typedLetter == 'D') {
+		console.log("got d.");
+		var wrapper = document.getElementsByClassName("jeremy")[0];
+		this.offsetX += 10;
+		wrapper.scrollLeft = this.offsetX;
+	} else if (e.keyCode == 65) {
+		 console.log("got a");
+	} else if (e.keyCode == 87) {
+		console.log("got w");
+	}
+}
+
+Editor.prototype.receiveKeyUp = function(e) {
+	var typedLetter = String.fromCharCode(e.keyCode);
+	if (e.keyCode == 17) {
+		console.log("control up.");
+	}
+}
+
 Editor.prototype.receiveMouseUp = function(event) {
 	if (this.selectedTile != null) {
 		var tile = Tile.factory(this.selectedTile);
@@ -81,6 +129,7 @@ Editor.prototype.receiveMouseUp = function(event) {
 			if (this.hoveredX != -1 && this.hoveredY != -1) {
 				this.world.setTile(this.hoveredX, this.hoveredY, tile);
 				this.drawMap();
+				this.drawMiniMap();
 			}
 		}
 	}
@@ -114,10 +163,13 @@ Editor.prototype.draw = function() {
 			html += "<p>Duis cursus.</p>";
 		html += "</div>";
 	html += "</div>";
+	
 	html += "<div id='minimap'>";
+	html += this.world.getMinimapHtml();
+	/*html += "<div id='minimap'>";
 		html += "<p style='margin-top:20px; margin-left:20px;'>minimap</p>";
+	html += "</div>";*/
 	html += "</div>";
-
 
 	html += "<div id='objects'>";
 		html += "<ul>";
@@ -150,6 +202,10 @@ Editor.prototype.draw = function() {
 Editor.prototype.drawMap = function() {
 	$('.jeremy').first().html(this.world.getAllHtml());
 	this.setEvents();
+}
+
+Editor.prototype.drawMiniMap = function() {
+	$('#minimap').html(this.world.getMinimapHtml());
 }
 
 Editor.prototype.setEvents = function() {

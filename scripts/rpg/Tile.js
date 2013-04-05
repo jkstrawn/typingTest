@@ -76,6 +76,10 @@ Tile.prototype.getImageWithCoords = function(x, y) {
 	return html;
 }
 
+Tile.prototype.getImageWithSize = function(x, y, sizeX, sizeY) {
+	return "<img style='float:left' height='" + sizeY + "' width='" + sizeX + "' src='" + this.sprite + "'/>";
+}
+
 Tile.prototype.getBackground = function() {
 	return this.background;
 }

@@ -412,6 +412,8 @@ $(document).ready( function() {
 		rpgManager = new RpgManager();
 		rpgManager.initialize();
 		$(document).keypress(function(event) { return rpgManager.sendKey(event) });
+		$(document).keydown(function(event) { return rpgManager.sendKeyDown(event) });
+		$(document).keyup(function(event) { return rpgManager.sendKeyUp(event) });
 		$(document).mouseup(function(event) {
 			rpgManager.sendMouseUp(event);
 		});
