@@ -130,6 +130,7 @@ Controller.prototype.init = function(wordList) {
 	this.setWordObjectList(wordList);
 
 	this.getNewWord();
+	this.displayLetterTime();
 }
 
 //Initiate the list of all words that can be used
@@ -244,14 +245,6 @@ Controller.prototype.getWordScore = function(word) {
 	var sum = 0;
 	var handDuration = 1;
 
-	for (var i = 0; i < 26; i++) {
-		//for each letter
-		
-	}
-	for (var i = 0; i < word.length; i++) {
-
-	}
-
 	for (var i = 0; i < word.length; i++) {
 		var letter = word[i];
 		var letterCode = letter.charCodeAt(0)-97;
@@ -292,7 +285,7 @@ Controller.prototype.getWordScore = function(word) {
 	for (var i = 0; i < 26; i++) {
 		//for each letter check its frequency
 		var count = 0;
-		
+
 		for (var k = 0; k < word.length; k++) {
 			if ((word.charCodeAt(k)-97) == i) {
 				count++;
@@ -314,59 +307,6 @@ Controller.prototype.receiveKey = function(key) {
 	var nextLetter = this.currentWord.toString()[this.currentPosition];
 	var clockTick = this.timer.tick();
 
-	var word = getNextWord();
-
-	setNextWord(nextWord);
-
-	//The first time there will not be a word in the next div, so give a new random one
-	if (word == undefined)
-	{
-		word = getUnusedWord();
-	}
-
-	setWord(word);
-	thisSession.addWord(word);
-}
-
-function getUnusedWord()
-{
-	var randomInt = Math.floor(Math.random() * wordObjectList.length);
-	var unusedWord = wordObjectList[randomInt];
-
-	var used = thisSession.checkWordUsed(unusedWord);
-
-	//Only try to find an unused word if there are any left
-	if(thisSession.getWordUsedLength < wordObjectList.length)
-	{
-		while (used)
-		{
-			randomInt = Math.floor(Math.random() * wordObjectList.length);
-			unusedWord = wordObjectList[randomInt];
-			used = thisSession.checkWordUsed(unusedWord);
-		}
-	}
-
-	return unusedWord;
-}
-
-function sendKeyStroke (event) {
-	//console.log("key: " + event.keyCode);
-	receiveKey(event.keyCode);
-	return false;
-}
-
-function cancelBackspace (event) {
-	//console.log("key: " + event.keyCode);
-	if (event.keyCode == 8 || event.keyCode == 9) {
-		receiveKey(event.keyCode);
-		return false;
-	}
-}
-
-function receiveKey (key) {
-	var typedLetter = String.fromCharCode(key);
-	var nextLetter = globalWord.toString()[currentPosition];
-	var clockTick = timer.tick();
 	if (typedLetter == nextLetter) {
 		this.recordLetter(typedLetter, this.currentLetter, clockTick);
 		//var _letter = new Letter(typedLetter, clockTick, currentLetter, currentPosition);

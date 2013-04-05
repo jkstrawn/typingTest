@@ -58,8 +58,9 @@ echo $this->Html->script('keyboardList');
         <th>Word Content</th>
         <th>Difficulty</th>
     </tr>
-
-    <!-- Here is where we loop through our $posts array, printing out post info
+    
+    <!-- Here is where we loop through our $posts array, printing out post info -->
+    <?phpecho $this->Session->flash(); ?>
 
     <?php foreach ($words as $word): ?>
     <tr>
