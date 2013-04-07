@@ -27,6 +27,10 @@ function Tile(name, sprite, background, passable, spawns) {
 	
 }
 
+Tile.prototype.getSprite = function() {
+	return this.sprite;
+}
+
 /*Tile.prototype.getImage = function() {
 	return "<img style='float:left' src='" + this.sprite + "'/>";
 }*/

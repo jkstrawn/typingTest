@@ -2,7 +2,7 @@
 //********************************      WORLD      *************************************
 //**************************************************************************************
 
-function World(x, y) {
+function World(x, y, hasCharacter) {
 	this.x = x;
 	this.y = y;
 
@@ -21,12 +21,18 @@ function World(x, y) {
 		}
 	}
 
-	this.tiles[10][10] = this.character;
+	if (hasCharacter) {
+		this.tiles[10][10] = this.character;
+	}
 }
 
 World.prototype.draw = function() {
 	var html = this.getHtml();
 	$('body').html(html);
+}
+
+World.prototype.getAllTiles = function() {
+	return this.tiles;
 }
 
 World.prototype.getHtml = function() {

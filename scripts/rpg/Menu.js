@@ -8,6 +8,7 @@ function Menu() {
 	// buttons on the home screen
 	this.buttons.push("<button class='action' type='button' onclick='rpgManager.goToMap()'> View Map </button>");
 	this.buttons.push("<button class='action' type='button' onclick='rpgManager.test()'> test </button>");
+	this.buttons.push("<button class='action' type='button' onclick='rpgManager.test2()'> test2 </button>");
 	this.buttons.push("<button class='action' type='button' onclick='rpgManager.goToEditor()'> Editor </button>");
 }
 
@@ -19,7 +20,7 @@ Menu.prototype.displayActions = function() {
 	var html = "<div id='actions'>";
 
 	$.each(this.buttons, function(index, element) {
-		html += element + "<br />";
+		html += element;
 	});
 
 	html += "</div>";

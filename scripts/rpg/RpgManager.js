@@ -7,9 +7,9 @@ function RpgManager() {
 	this.zones = [];
 	this.zone = "";
 	this.character = "";
-	this.world = new World(20, 20);
+	this.world = new World(20, 20, true);
 	this.menu = new Menu();
-	this.editor = new Editor(this.world);
+	this.editor = new Editor();
 	this.encounter = null;
 	this.state = "menu";
 	
@@ -94,7 +94,29 @@ RpgManager.prototype.goToMap = function() {
 }
 
 RpgManager.prototype.test = function() {
-	alert("test");
+	$.getJSON( "services/test.php")
+		.done(function( json ) {
+			var data = "";
+			/*$.each(json, function(index, element){
+				data += element + ", ";
+			});*/
+			console.log( "JSON Data: " + json );
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ', ' + error;
+			console.log( "Request Failed: " + err);
+	});
+}
+
+RpgManager.prototype.test2 = function() {
+	$.getJSON( "services/test2.php")
+		.done(function( json ) {
+			console.log( "JSON Data: " + json.a );
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ', ' + error;
+			console.log( "Request Failed: " + err);
+	});
 }
 
 RpgManager.prototype.setEncounter = function(location) {

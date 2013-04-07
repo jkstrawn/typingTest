@@ -5,6 +5,102 @@ body {
 	width:1000px;
 }
 
+/***************************************************************************************
+//********************************      PANES      *************************************
+//*************************************************************************************/
+
+#menuBar {
+
+}
+
+.editMapPane {
+	overflow:hidden;
+	width: 564px;
+	height: 440px;
+}
+
+#editTerrainsPane {
+
+}
+
+#editTilesPane {
+
+}
+
+#editCreaturesPane {
+
+}
+
+#editSurfacesPane {
+
+}
+
+#selectTerrainsPane {
+
+}
+
+#selectTilesPane {
+
+}
+
+#selectCreaturesPane {
+
+}
+
+#selectSurfacesPane {
+
+}
+
+
+
+#editMap {
+	width: 640px;
+	height: 640px;
+}
+
+
+
+
+.tile {
+	float: left;
+	height: 32px;
+	width: 32px;
+	background-repeat: no-repeat;
+	position: relative;
+}
+
+
+.tileSprite {
+	height: 32px;
+	width: 32px;
+}
+
+.tileSurface {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 32px;
+	width: 32px;
+}
+
+.tileHighlight {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 32px;
+	width: 32px;
+	opacity: 0.4;
+}
+
+
+
+
+.row {
+	width: 640px;
+	height: 32px;
+	float: left;
+}
+
 #jeremy {
 	width: 640px;
 	height: 640px;
@@ -12,11 +108,13 @@ body {
 
 .action {
 	float: left;
+	width: 90px;
 }
 
 #actions {
 	margin-top: 200px;
 	margin-left: 500px;
+	width: 100px;
 }
 
 #map {
@@ -36,12 +134,6 @@ body {
 	width: 124px;
 }
 
-.tile {
-	float: left;
-	height: 32px;
-	width: 32px;
-	background-repeat: no-repeat;
-}
 
 #wordDiv {
 	position: absolute;
