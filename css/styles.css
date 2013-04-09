@@ -69,6 +69,10 @@ body {
 	position: relative;
 }
 
+.test {
+	
+}
+
 
 .tileSprite {
 	height: 32px;
@@ -81,6 +85,15 @@ body {
 	left: 0px;
 	height: 32px;
 	width: 32px;
+}
+
+.tileImpassable {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 32px;
+	width: 32px;
+	opacity: 0.4;
 }
 
 .tileHighlight {
@@ -222,7 +235,7 @@ body {
 
 #objects {
 	float: left;
-	width: 200px;
+	width: 260px;
 	height: 300px;
 	border-style:solid;
 	border-width:3px;

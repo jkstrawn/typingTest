@@ -27,6 +27,14 @@ function Tile(name, sprite, background, passable, spawns) {
 	
 }
 
+Tile.prototype.getName = function() {
+	return this.name;
+}
+
+Tile.prototype.getPassable = function() {
+	return this.passable;
+}
+
 Tile.prototype.getSprite = function() {
 	return this.sprite;
 }

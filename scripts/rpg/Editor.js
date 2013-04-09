@@ -3,31 +3,37 @@
 //**************************************************************************************
 
 function Editor() {
-	this.world = new World(20, 20, false);;
+	var tileRowLength = 4;
+
+	this.world = new World(20, 20, false);
 	this.selectedTile = null;
 	this.hoveredX = -1;
 	this.hoveredY = -1;
 	this.offsetX = 0;
 	this.offsetY = 0;
 	this.tiles = [new Plains(), new Mountains()];
+	this.tileRowLength = tileRowLength;
+	this.factory = new TileFactory();
 
 	this.database = new Database();
 	var tileData = this.database.getTiles();
 	this.selectorTileList = new TileList(tileData);
 	this.editorTileList = new TileList(tileData);
 
+
+
 	this.menuBar = new MenuBar();
 
-	this.editMap = new EditMap(this.world);
-	this.editTerrains = new EditTerrains();
+	this.editMap = new EditMap(this.world, this.factory);
 	this.editTiles = new EditTiles();
-	this.editCreatures = new EditCreatures();
+	this.editTerrains = new EditTerrains();
 	this.editSurfaces = new EditSurfaces();
+	this.editCreatures = new EditCreatures();
 
+	this.selectTiles = new SelectTiles(tileRowLength, this.factory);
 	this.selectTerrains = new SelectTerrains();
-	this.selectTiles = new SelectTiles();
-	this.selectCreatures = new SelectCreatures();
 	this.selectSurfaces = new SelectSurfaces();
+	this.selectCreatures = new SelectCreatures();
 	
 
 }
@@ -121,11 +127,12 @@ Editor.prototype.receiveMouseUp = function(event) {
 		var tile = Tile.factory(this.selectedTile);
 		if (tile != null) {
 
-			if (this.hoveredX != -1 && this.hoveredY != -1) {
+			/*if (this.hoveredX != -1 && this.hoveredY != -1) {
 				this.world.setTile(this.hoveredX, this.hoveredY, tile);
 				this.drawMap();
 				this.drawMiniMap();
-			}
+			}*/
+			this.editMap.setSelectedTile(tile.getSprite());
 		}
 	}
 	
@@ -139,11 +146,8 @@ Editor.prototype.draw = function() {
 	body.append(this.menuBar.getHtml());
 	body.append("<br />");
 
-	//html += "<br />";
-
 	// work area
 	var workArea = $("<div></div>").attr("id", "tabs");
-	//html += "<div id='tabs'>";
 		
 		var tabList = $("<ul></ul>");
 		tabList.append("<li><a href='#tabs-1'>Map</a></li>");
@@ -154,108 +158,48 @@ Editor.prototype.draw = function() {
 
 		workArea.append(tabList);
 
-		/*html += "<ul>";
-			// title of map area
-			html += ;
-			// title of tiles tab
-			html += ;
-			// tite of terrains tab
-			html += ;
-			// title of surfaces tab
-			html += ;
-			// title of creatures tab
-			html += ;
-		html += "</ul>";*/
-
 		// edit map tab
-		
 		workArea.append(this.editMap.getHtml());
-		//html += this.editMap.getHtml();
-
-		/*html += "<div id='tabs-1' class='jeremy' tabindex='0' style='overflow:hidden;width: 564px;height: 440px;z-index: 1'>";
-
-			html += this.world.getAllHtml();
-
-		html += "</div>";*/
-
-		// edit tiles tab
-		/*html += "<div id='tabs-2'>";
-			html += "<p>Morbi tincidunt.</p>";
-		html += "</div>";*/
-
-		workArea.append(this.editTerrains.getHtml());
-		workArea.append(this.editTiles.getHtml());
-		workArea.append(this.editCreatures.getHtml());
-		workArea.append(this.editSurfaces.getHtml());
-		
-
-		workArea.append(this.selectTerrains.getHtml());
-		workArea.append(this.selectTiles.getHtml());
-		workArea.append(this.selectCreatures.getHtml());
-		workArea.append(this.selectSurfaces.getHtml());
-
-		body.append(workArea);
 
 		// edit terrains tab
-		/*html += "<div id='tabs-3'>";
-			html += "<p>Mauris eleifend est et turpis.</p>";
-			html += "<p>Duis cursus.</p>";
-		html += "</div>";
+		workArea.append(this.editTerrains.getHtml());
 
-		// edit surfaces tab
-		html += "<div id='tabs-4'>";
-			html += "<p>Mauris eleifend est et turpis.</p>";
-			html += "<p>Duis cursus.</p>";
-		html += "</div>";
+
+		workArea.append(this.editTiles.getHtml());
 
 		// edit creatures tab
-		html += "<div id='tabs-5'>";
-			html += "<p>Mauris eleifend est et turpis.</p>";
-			html += "<p>Duis cursus.</p>";
-		html += "</div>";*/
-		
-	//html += "</div>";
+		workArea.append(this.editCreatures.getHtml());
+
+		// edit surfaces tab
+		workArea.append(this.editSurfaces.getHtml());
+
+		body.append(workArea);
 	
 	// minimap
 	var minimap = $("<div></div>").attr("id", "minimap").html(this.world.getMinimapHtml());
 	body.append(minimap);
-	//html += "<div id='minimap'>";
-	//html += this.world.getMinimapHtml();
-	/*html += "<div id='minimap'>";
-		html += "<p style='margin-top:20px; margin-left:20px;'>minimap</p>";
-	html += "</div>";*/
-	//html += "</div>";
 
 	// Selector area tab element
 	var selectorArea = $("<div></div>").attr("id", "objects");
 
 
-	//html += "<div id='objects'>";
-		var html = "<ul>";
-			html += "<li><a href='#tabs-1'>tiles</a></li>";
-			html += "<li><a href='#tabs-2'>Proin</a></li>";
-		html += "</ul>";
-		html += "<div id='tabs-1'>";
+	// Selector area
+		var tabList2 = $("<ul></ul>");
+		tabList2.append("<li><a href='#tabs-1'>Tiles</a></li>");
+		//tabList2.append("<li><a href='#tabs-2'>Terrains</a></li>");
+		tabList2.append("<li><a href='#tabs-3'>Surfaces</a></li>");
+		tabList2.append("<li><a href='#tabs-4'>Creatures</a></li>");
+		selectorArea.append(tabList2);
+		
+		selectorArea.append(this.selectTiles.getHtml());
+		//selectorArea.append(this.selectTerrains.getHtml());
+		selectorArea.append(this.selectSurfaces.getHtml());
+		selectorArea.append(this.selectCreatures.getHtml());
 
-			var tiles = this.world.getTiles();
-			for (var i = 0; i < tiles.length; i++) {
-				var tile = tiles[i];
-				html += "<div id='" + tile.name + "' style='float:left' onclick='rpgManager.editor.setSelectedTile(\"" + tile.name + "\")'>";
-				html += tile.getHtml();
-				html += "</div>";
-			}
-
-		html += "</div>";
-		html += "<div id='tabs-2'>";
-			html += "<p>Morbi arcu, dui sit amet arcu arcu, odio metus arcu ante, ut arcu massa metus id nunc. Duis arcu arcu turpis.</p>";
-		html += "</div>";
-	//html += "</div>";
-	selectorArea.html(html);
+		
+		
+	//selectorArea.html(html);
 	body.append(selectorArea);
-
-	//$('body').html(html);
-
-	
 
 
 	$("#tabs").tabs();
@@ -274,36 +218,93 @@ Editor.prototype.drawMiniMap = function() {
 }
 
 Editor.prototype.setEvents = function() {
-	$(".tile").hover(
+	$(".test").hover(
 		function() {
-			//$(this).css({"height": "30px", "width": "30px", "border-style": "solid", "border-width": "1px", "border-color": "blue"});
 			var id = $(this).attr('id');
 			if (id) {
 				var coords = id.split("_");
-				var x = coords[0];
-				var y = coords[1];
+				var x = parseInt(coords[0]);
+				var y = parseInt(coords[1]);
 
 				rpgManager.editor.editMap.highlightTile(x, y);
-
-				//rpgManager.editor.hoveredX = coords[0];
-				//rpgManager.editor.hoveredY = coords[1];
 			}
 		},
 		function() {
-			//$(this).css({"height": "32px", "width": "32px", "border-style": "solid", "border-width": "0px", "border-color": "blue"});
+			/*var id = $(this).attr('id');
+			if (id) {
+				var coords = id.split("_");
+				var x = parseInt(coords[0]);
+				var y = parseInt(coords[1]);
+
+				rpgManager.editor.editMap.unhighlightTiles();
+			}*/
+		}
+	);
+
+	$(".test").click(function() {
+		var id = $(this).attr('id');
+			if (id) {
+				var coords = id.split("_");
+				var x = parseInt(coords[0]);
+				var y = parseInt(coords[1]);
+
+				rpgManager.editor.editMap.replaceHighlightedTiles(x, y);
+			}
+	});
+
+	/*$(".test2").click(function() {
+		var id = $(this).attr('id');
+		if (id) {
+			var coords = id.split("_");
+			var tileName = coords[1];
+
+			rpgManager.editor.selectTiles.setStartSelect(tileName);
+			rpgManager.editor.selectTiles.setEndSelect(tileName);
+		}
+	});*/
+
+	$(".test2").mousedown(function(){
+		var id = $(this).attr('id');
+		if (id) {
+			var coords = id.split("_");
+			var tileName = coords[1];
+
+			rpgManager.editor.selectTiles.setStartSelect(tileName);
+		}
+	}).mouseup(function(){
+		var id = $(this).attr('id');
+		if (id) {
+			var coords = id.split("_");
+			var tileName = coords[1];
+
+			rpgManager.editor.selectTiles.setEndSelect(tileName);
+		}
+	});
+
+	/*$(".test").hover(
+		function() {
 			var id = $(this).attr('id');
 			if (id) {
 				var coords = id.split("_");
-				var x = coords[0];
-				var y = coords[1];
+				var x = parseInt(coords[0]);
+				var y = parseInt(coords[1]);
 
-				rpgManager.editor.editMap.unhighlightTile(x, y);
+				rpgManager.editor.editMap.highlightTile(x, y);
+			}
+		},
+		function() {
+			/*var id = $(this).attr('id');
+			if (id) {
+				var coords = id.split("_");
+				var x = parseInt(coords[0]);
+				var y = parseInt(coords[1]);
 
-				//rpgManager.editor.hoveredX = coords[0];
-				//rpgManager.editor.hoveredY = coords[1];
+				rpgManager.editor.editMap.unhighlightTiles();
 			}
 		}
-	);
+	);*/
+
+	$('img').on('dragstart', function(event) { event.preventDefault(); });
 }
 
 Editor.prototype.setSelectedTile = function(tileName) {
@@ -316,82 +317,6 @@ Editor.prototype.setSelectedTile = function(tileName) {
 	});
 
 	$(name).css({"border-style": "solid", "border-width": "1px", "border-color": "orange"});
-}
-
-
-
-
-//**************************************************************************************
-//********************************    TILELIST     *************************************
-//**************************************************************************************
-
-function TileList() {
-	this.tiles = [];
-	this.selectedTile = -1;
-}
-
-TileList.prototype.addTile = function(tile) {
-	var name = tile.getName();
-
-	if (this.getTileIndex(name) == -1) {
-		this.tiles.push(tile);
-	} else {
-		// error - tile with that name is already in list
-	}	
-}
-
-TileList.prototype.addTiles = function(tiles) {
-	for (var i = 0; i < tiles.length; i++) {
-		var tile = tiles[i];
-		this.addTile(tile);
-	}
-}
-
-TileList.prototype.selectTile = function(tileName) {
-	var index = this.getTileIndex(tileName);
-
-	if (index != -1) {
-		this.unhighlightTile(this.selectedTile);
-		this.selectedTile = index;
-		this.highlightTile(index);
-
-	} else {
-		// error - tilename isn't in list
-	}
-}
-
-TileList.prototype.getTileIndex = function(tileName) {
-	for (var i = 0; i < this.tiles.length; i++) {
-		if (tileName == this.tiles[i].getName()) {
-			return i;
-		}
-	}
-
-	return -1;
-}
-
-TileList.prototype.unhighlightTile = function(index) {
-	/*$.each(this.tiles, function(index, element){
-		var name = '#' + element.name;
-		$(name).css({"border-width": "0px"});
-	});*/
-
-}
-
-TileList.prototype.highlightTile = function(index) {
-	//$(name).css({"border-style": "solid", "border-width": "1px", "border-color": "orange"});
-}
-
-
-
-
-//**************************************************************************************
-//********************************  TILELISTTILE   *************************************
-//**************************************************************************************
-
-function TileListTile(tile) {
-	this.tile = tile;
-	//this.htmlObject = $("<img />").attr("height", 10).attr("width", 10).html
 }
 
 
@@ -434,4 +359,25 @@ TileFactory.prototype.isATileName = function(tileName) {
 	});
 
 	return false;
+}
+
+TileFactory.prototype.getTileNames = function() {
+
+}
+
+
+TileFactory.prototype.getTiles = function() {
+	// return an array of tile objects
+	var tiles = [new Plains(), new Mountains()];
+	return tiles;
+}
+
+TileFactory.prototype.getTileByName = function(tileName) {
+	if (tileName == "plains") {
+		return new Plains();
+	} else if (tileName == "mountains") {
+		return new Mountains();
+	}
+
+	return null;
 }
