@@ -1,0 +1,84 @@
+
+
+<html>
+<head>
+	<title>testing image splitting</title>
+	
+</head>
+<body>
+	<canvas id="myCanvas" width="300" height="300"
+	style="border:1px solid #000000;">
+	</canvas>
+
+	<script type="text/javascript">
+		/*var c=document.getElementById("myCanvas");
+		var ctxl=c.getContext("2d");
+		ctxl.fillStyle="red";
+		ctxl.fillRect(10,10,50,50);*/
+
+		function copy()
+		{
+			var imgData=ctxl.getImageData(10,10,50,50);
+			ctxl.putImageData(imgData,10,70);
+		}
+
+
+		function myFunction() {
+			var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+			var imageObj = new Image();
+			imageObj.src = "grass.png";
+			imageObj.crossOrigin = '';
+
+			ctx.drawImage(imageObj, 0, 0);
+
+			var imageWidth = 192;
+			var imageHeight = 32;
+			var tileWidth = 32;
+			var tileHeight = 32;
+
+			var tilesX = imageWidth / tileWidth;
+			var tilesY = imageHeight / tileHeight;
+			var totalTiles = tilesX * tilesY;        
+			var tileData = new Array();
+			for(var i=0; i<tilesY; i++) {
+				for(var j=0; j<tilesX; j++) {
+					// Store the image data of each tile in the array.
+					tileData.push(ctx.getImageData(j*tileWidth, i*tileHeight, tileWidth, tileHeight));
+				}
+			}
+			//From here you should be able to draw your images back into a canvas like so:
+			ctx.putImageData(tileData[0], 100, 100);
+		}
+
+
+
+		/*var img = new Image;
+    var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+    var src = "grass.png"; // insert image url here
+ 
+img.crossOrigin = "Anonymous";
+ 
+img.onload = function() {
+    //canvas.width = img.width;
+    //canvas.height = img.height;
+    ctx.drawImage( img, 0, 0 );
+    localStorage.setItem( "savedImageData", canvas.toDataURL("image/png") );
+}
+img.src = src;
+// make sure the load event fires for cached images too
+if ( img.complete || img.complete === undefined ) {
+    img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+    img.src = src;
+}*/
+
+	</script>
+
+	<button onclick="copy()">Copy</button>
+	<button onclick="myFunction()">Func</button>
+</body>
+</html>
+
+
+

@@ -1,0 +1,178 @@
+Editor
+	responsible for sending actions to the appropriate pane
+	for getting the data from the db and sending to factory
+	for getting the world and constructing it
+	TileSelectionPane, TileEditingPane, and EditorWorld need tile info updates
+	MapPane needs the world data
+
+
+
+EditorWorld
+	holds all the data for the map
+	sends an array of tiles to db for persistence
+	a type of Grid?
+
+
+
+EditorWorldTile
+	has a tile, and a dom element
+
+	construct(tile, x, y)
+	element()
+	tile()
+
+
+
+TileFactory
+	gets an array of entries that represent tiles
+
+
+
+Tile
+
+
+
+SurfaceFactory
+
+
+
+Surface
+
+
+
+Database
+	responsible for communicating with the database
+	converts db data to Factory data - likely little to no conversion
+	converts tile/surface/creature/terrain data to db data
+	handle all ajax calls to the database
+
+
+
+Grid
+	needs to support selection
+		a start point and end point
+	a default graphic for uncreated tiles
+	mouseDown
+
+	construct(width, height)
+	element()
+	mouseDown()
+	selectionStartPoint()
+	selectionEndPoint()
+	selectedElement()
+	selectedArrayOfElements()
+	hover(x, y)
+	mouseDown(x, y) - return false to disable dragging
+	mouseUp(x, y)
+	updateObject(object, x, y)
+
+
+GridElement
+	needs to have a base graphic
+	a surface
+	a highlight - including specifying the image to use as a highlight
+	a reference to parent container
+	an object that it represents
+
+	construct(parent, object, x, y)
+	x()
+	y()
+	element()
+	highlight(image)
+	name()
+	parent()
+	object()
+
+	onHover
+	onMouseDown
+	onMouseUp
+
+
+List
+
+
+
+ListElement
+
+
+
+DomObjects
+
+
+
+
+MenuBar
+
+
+
+
+MinimapPane
+	has a dom element, a minimap, mouseDown
+
+	construct()
+	setTile(EditMapTile)
+
+
+
+Minimap
+	type of Grid
+
+
+
+MinimapTile
+	needs an onHover, an onMouseDown, an onMouseUp
+
+
+
+EditingPanes
+
+
+
+MapPane
+
+
+
+TileEditingPane
+
+
+
+
+TileselectionPane
+
+
+
+TerrainEditingPane
+
+
+
+
+SurfaceEditingPane
+
+
+
+
+CreatureEditingPane
+
+
+
+
+SelectionPanes
+
+
+
+
+TileSelectionPane
+
+
+
+
+TerrainSelectionPane
+
+
+
+SurfaceSelectionPane
+
+
+
+
+CreatureSelectionPane

@@ -307,6 +307,10 @@ Editor.prototype.setEvents = function() {
 	$('img').on('dragstart', function(event) { event.preventDefault(); });
 }
 
+Editor.prototype.getFactory = function() {
+	return this.factory;
+}
+
 Editor.prototype.setSelectedTile = function(tileName) {
 	this.selectedTile = tileName;
 	var name = '#' + tileName;
@@ -319,65 +323,38 @@ Editor.prototype.setSelectedTile = function(tileName) {
 	$(name).css({"border-style": "solid", "border-width": "1px", "border-color": "orange"});
 }
 
-
-
-
-
-//**************************************************************************************
-//********************************   TILEFACTORY   *************************************
-//**************************************************************************************
-
-function TileFactory() {
-	this.tileData = [];
-}
-
-TileFactory.prototype.setData = function(tileData) {
-	this.tileData = tileData;
-}
-
-TileFactory.prototype.addTile = function(tile) {
-	this.tileData.push(tile);
-}
-
-TileFactory.prototype.createTile = function(tileName) {
-	if (this.isATileName(tileName)) {
-		var tileData = this.tileData[tileName];
-		var sprite;
-		var background;
-		var passable;
-		return new Tile();
-	} else {
-		return null;
-	}
-}
-
-TileFactory.prototype.isATileName = function(tileName) {
-	$.each(this.tileData, function(index, element){
-		if (index == tileName) {
-			return true;
-		}
+Editor.prototype.loadTiles = function() {
+	$.getJSON("services/getTiles.php")
+		.done(function( json ) {
+			rpgManager.getEditor().getFactory().setData(json);
+			//console.log( "JSON Data: " + json );
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ', ' + error;
+			console.log( "Request Failed: " + err);
 	});
-
-	return false;
 }
 
-TileFactory.prototype.getTileNames = function() {
+Editor.prototype.loadMap = function() {
+	var selectedMapName = this.menuBar.getSelectedMapName();
 
+	$.getJSON("services/getWorld.php?name=" + selectedMapName)
+		.done(function( json ) {
+			rpgManager.getEditor().createWorldFromData(json);
+			//console.log( "JSON Data: " + json );
+		})
+		.fail(function( jqxhr, textStatus, error ) {
+			var err = textStatus + ', ' + error;
+			console.log( "Request Failed: " + err);
+	});
 }
 
-
-TileFactory.prototype.getTiles = function() {
-	// return an array of tile objects
-	var tiles = [new Plains(), new Mountains()];
-	return tiles;
+Editor.prototype.createWorldFromData = function(data) {
+	var selectedMapData = this.menuBar.getSelectedMapData();
+	this.world = new EditorWorld(data, selectedMapData.x, selectedMapData.y);
+	this.editMap.setWorld(this.world);
 }
 
-TileFactory.prototype.getTileByName = function(tileName) {
-	if (tileName == "plains") {
-		return new Plains();
-	} else if (tileName == "mountains") {
-		return new Mountains();
-	}
+Editor.prototype.createWorld = function(defaultTile) {
 
-	return null;
 }

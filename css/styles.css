@@ -73,6 +73,10 @@ body {
 	
 }
 
+.button {
+	margin: 3px;
+}
+
 
 .tileSprite {
 	height: 32px;

@@ -25,6 +25,14 @@ RpgManager.prototype.initialize = function() {
 	this.menu.displayActions();
 }
 
+RpgManager.prototype.editor = function(editor) {
+	if (arguments.length == 1) {
+		this.editor = editor;
+	} else {
+		return this.editor;
+	}
+}
+
 RpgManager.prototype.sendKey = function(event) {
 	if (this.state == "menu") {
 		this.menu.receiveKey(event.keyCode);
