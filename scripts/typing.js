@@ -1,3 +1,35 @@
+var WORDS = {};
+
+
+var dvorak = [];
+dvorak[0] = 10;
+dvorak[1] = 25;
+dvorak[2] = 7;
+dvorak[3] = 15;
+dvorak[4] = 12;
+dvorak[5] = 5;
+dvorak[6] = 6;
+dvorak[7] = 16;
+dvorak[8] = 14;
+dvorak[9] = 22;
+dvorak[10] = 23;
+dvorak[11] = 9;
+dvorak[12] = 26;
+dvorak[13] = 18;
+dvorak[14] = 11;
+dvorak[15] = 3;
+dvorak[16] = 21;
+dvorak[17] = 8;
+dvorak[18] = 19;
+dvorak[19] = 17;
+dvorak[20] = 13;
+dvorak[21] = 28;
+dvorak[22] = 27;
+dvorak[23] = 24;
+dvorak[24] = 4;
+dvorak[25] = 29;
+
+
 function Timer() {
     this.gameTime = 0;
     this.maxStep = 0.05;
@@ -37,7 +69,7 @@ function LetterRank (score, finger, row) {
 
 function Word () 
 {
-	this.content = "";
+	this.word = "";
 	this.difficulty = 0;
 }
 
@@ -51,71 +83,47 @@ Word.prototype.getDifficulty = function ()
 	return this.difficulty;
 }
 
-Word.prototype.setContent = function(word)
+Word.prototype.setWord = function(word)
 {
-	this.content = word;
+	this.word = word;
 }
 
 Word.prototype.toString = function()
 {
-	return this.content;
+	return this.word;
 }
-
-var dvorak = [];
-dvorak[0] = 10;
-dvorak[1] = 25;
-dvorak[2] = 7;
-dvorak[3] = 15;
-dvorak[4] = 12;
-dvorak[5] = 5;
-dvorak[6] = 6;
-dvorak[7] = 16;
-dvorak[8] = 14;
-dvorak[9] = 22;
-dvorak[10] = 23;
-dvorak[11] = 9;
-dvorak[12] = 26;
-dvorak[13] = 18;
-dvorak[14] = 11;
-dvorak[15] = 3;
-dvorak[16] = 21;
-dvorak[17] = 8;
-dvorak[18] = 19;
-dvorak[19] = 17;
-dvorak[20] = 13;
-dvorak[21] = 28;
-dvorak[22] = 27;
-dvorak[23] = 24;
-dvorak[24] = 4;
-dvorak[25] = 29;
 
 //*****************************************************************************************************************************************************************
 //******************************************************************* CONTROLLER **********************************************************************************
 //*****************************************************************************************************************************************************************
 function Controller() {
 	this.lettersTyped = [];
-	this.wordsType = [];
 	this.mistakes = [];
+	this.wordsTyped = [];
 
-	this.letterList = [];
+	this.letterStatList = [];
 
-	this.currentWord;
+	this.wordObject;
 	this.nextWord;
-	this.currentPosition = 0;
-	this.letterStreak = 0;
-	this.currentLetter = ' ';
-	this.firstLetter = true;
 
 	this.session = new UserSession();
-	this.wordObjectList = [];
+	this.allPossibleWords = [];
+	this.completedWords = [];
+	this.wordObjects = [];
+	this.activeWordObject = null;
+	this.wordsLeft = 0;
 	this.timer = new Timer();
 	this.layout = "dvorak";
+
+	this.consecutiveLetters = 0;
+	this.difficultyLevel = 0;
+	this.score = 0;
 }
 
 Controller.prototype.init = function(wordList) {
 
 	for (var i = 0; i < 26; i++) {
-		this.letterList[i] = new Key();
+		this.letterStatList[i] = new Key();
 	}
 
 	displayWord('treat');
@@ -125,27 +133,63 @@ Controller.prototype.init = function(wordList) {
 	displayWord('cope');
 	displayWord('jaw');
 
-	var wordList = $.unique(wordList.match(/\w+/mg));
+	//var uniqueWordList = $.unique(wordList.match(/\w+/mg));
 
-	this.setWordObjectList(wordList);
 
-	this.getNewWord();
+	//this.setallPossibleWords(uniqueWordList);
+	//this.setallPossibleWords(["play", "dance", "wolf", "walk", "sleep", "talk"]);
+	this.setallPossibleWords(wordList);
+	this.wordsLeft = this.allPossibleWords.length;
+
+	this.makeNewWordObject();
+	//this.getNewWord();
 	this.displayLetterTime();
 }
 
 //Initiate the list of all words that can be used
-Controller.prototype.setWordObjectList = function(wordsList) {
+Controller.prototype.setallPossibleWords = function(wordsList) {
 	var that = this;
 	$.each(wordsList, function (index, element) {
-		var currWord = new Word();
+		var word = new Word();
 
-		currWord.setContent(element);
-		currWord.setDifficulty(that.getWordScore(element));
+		word.setWord(element);
+		word.setDifficulty(that.getWordScore(element));
 
-		that.wordObjectList.push(currWord);
+		that.allPossibleWords.push(word);
 	});
 }
 
+Controller.prototype.makeNewWordObject = function() {
+	var word = this.getAnUnusedWord();
+	this.putWordOntoPage(word);
+}
+
+Controller.prototype.getAnUnusedWord = function() {
+	if (this.wordsLeft == 0) {
+		this.wordsLeft = this.allPossibleWords.length;
+	}
+	var index = Math.floor(Math.random() * this.wordsLeft);
+	var word = this.allPossibleWords[index];
+	console.log("chose " + index + " out of " + this.wordsLeft + " : " + word);
+	this.moveWordToEndOfWordList(index);
+	this.wordsLeft--;
+
+	return word;
+}
+
+Controller.prototype.moveWordToEndOfWordList = function(index) {
+	//var word = this.allPossibleWords.splice(index, 1);
+	var word = this.allPossibleWords[index];
+	this.allPossibleWords.splice(index, 1);
+	this.allPossibleWords.push(word);
+}
+
+Controller.prototype.setNextWord = function(word) {
+	this.nextWord = word;
+	$("#nextWord").html(word.toString());
+}
+
+/*
 //Grab a new word from the list of total words and set it as the next word to use
 Controller.prototype.getNewWord = function() {
 	var _nextWord = this.getUnusedWord();
@@ -170,70 +214,61 @@ Controller.prototype.setNextWord = function(word) {
 
 //Get a word that has not been used yet from the word object list
 Controller.prototype.getUnusedWord = function() {
-	var randomInt = Math.floor(Math.random() * this.wordObjectList.length);
-	var unusedWord = this.wordObjectList[randomInt];
+	var randomInt = Math.floor(Math.random() * this.allPossibleWords.length);
+	var unusedWord = this.allPossibleWords[randomInt];
 
 	var isWordUsed = this.session.checkWordUsed(unusedWord);
 
 	//Only try to find an unused word if there are any left
-	if(this.session.getWordUsedLength < this.wordObjectList.length) {
+	if(this.session.getWordUsedLength < this.allPossibleWords.length) {
 		while (isWordUsed) {
 			//get a new word if the word is used
-			randomInt = Math.floor(Math.random() * this.wordObjectList.length);
-			unusedWord = this.wordObjectList[randomInt];
+			randomInt = Math.floor(Math.random() * this.allPossibleWords.length);
+			unusedWord = this.allPossibleWords[randomInt];
 			isWordUsed = this.session.checkWordUsed(unusedWord);
 		}
 	}
 
 	return unusedWord;
 }
-
+*/
 //Set the word onto page for the user to type
-Controller.prototype.setWord = function(word) {
-	this.currentWord = word;
-	this.currentPosition = 0;
-	var wordDiv = $('#wordDiv');
-	var wordHtml = "";
-
-	//create the individual letter spans (so they can be colored as they are typed)
-	for (var i = 0; i < word.toString().length; i++) {
-		wordHtml += '<span id="letter' + i + '">' + word.toString()[i] + '</span>';
-	};
-
-	wordDiv.html(wordHtml);
+Controller.prototype.putWordOntoPage = function(word) {
+	this.createWordObjects();
 
 	var score = word.getDifficulty();
 	var wordScoreDiv = $('#wordScoreDiv');	
 	//Set the score of the word onto the score div
-	wordScoreDiv.html(Number((score).toFixed(4)));
-}
+	wordScoreDiv.html(Number((score).toFixed(3)));
+};
+
+Controller.prototype.createWordObjects = function() {
+
+	for (var i = 0; i < 3; i++) {
+		var word = this.getAnUnusedWord();
+		var wordObject = new WORDS.WordObject("id", word, 400, 200 + i * 100, this, this.recordLetter, this.addCompletedWord, this.addMissedLetter);
+		wordObject.init();
+		this.wordObjects.push(wordObject);
+	}
+};
 
 //Update the timings on the page for the individual letters typed
 Controller.prototype.displayLetterTime = function() {
 	var letterScoresDiv = $('#letterScores');
 	var html = "<table>";
 	for (var i = 0; i < 26; i++) {
-		html += "<tr><td>" + String.fromCharCode(i+97) + "</td><td>" + this.letterList[i].averageTime + "ms</td></tr>";
+		html += "<tr><td>" + String.fromCharCode(i+97) + "</td><td>" + this.letterStatList[i].averageTime + "ms</td></tr>";
 	}
 	html += "</table>";
 	letterScoresDiv.html(html);
-}
+};
 
 //Record a key that was typed, and add the timing to the letter list
 Controller.prototype.recordLetter = function(letter, previous, time) {
 	var index = letter.charCodeAt(0)-97;
-	this.letterList[index].setLetterTiming(time);
+	console.log(this);
+	this.letterStatList[index].setLetterTiming(time);
 	this.displayLetterTime();
-}
-
-Controller.prototype.advancePosition = function() {
-	this.currentPosition++;
-	this.session.addStreak();
-
-	if (this.currentPosition >= this.currentWord.toString().length) {
-		this.session.addScore(this.currentWord.getDifficulty());
-		this.getNewWord();
-	}
 }
 
 Controller.prototype.getWordScore = function(word) {
@@ -304,28 +339,33 @@ Controller.prototype.getWordScore = function(word) {
 
 Controller.prototype.receiveKey = function(key) {
 	var typedLetter = String.fromCharCode(key);
-	var nextLetter = this.currentWord.toString()[this.currentPosition];
 	var clockTick = this.timer.tick();
 
-	if (typedLetter == nextLetter) {
-		this.recordLetter(typedLetter, this.currentLetter, clockTick);
-		//var _letter = new Letter(typedLetter, clockTick, currentLetter, currentPosition);
-		//lettersTyped.push(_letter);
-
-		var letterDiv = $('#letter'+this.currentPosition);
-		letterDiv.css("color", "red");
-		this.currentLetter = nextLetter;
-		this.session.addCorrectLetter();
-		this.advancePosition();
-	} else {
-		//var _mistake = new Mistake(nextLetter, currentLetter, clockTick, typedLetter);
-		//mistakes.push(_mistake);
-		this.session.addMissedLetter();
-		this.session.resetStreak();
+	if (this.activeWordObject == null) {
+		var wordObject = this.findWordObjectByFirstLetter(typedLetter);
+		if (wordObject) {
+			this.activeWordObject = wordObject;
+		} else {
+			return;
+		}		
 	}
 
+	this.activeWordObject.receiveKey(typedLetter, clockTick);
+
 	$("#stats").html(this.session.toString());
-}
+};
+
+Controller.prototype.findWordObjectByFirstLetter = function(letter) {
+	for (var i = this.wordObjects.length - 1; i >= 0; i--) {
+		var wordObject = this.wordObjects[i];
+		var firstLetter = wordObject.getFirstLetter();
+		if (firstLetter == letter) {
+			return wordObject;
+		}
+	};
+
+	return false;
+};
 
 Controller.prototype.convert = function(index) {
 	if (this.layout == "dvorak") {
@@ -334,11 +374,120 @@ Controller.prototype.convert = function(index) {
 		//its qwerty
 		return index;
 	}
+};
+
+Controller.prototype.addCompletedWord = function(word) {
+	var index = this.wordObjects.indexOf(this.activeWordObject);
+	this.wordObjects.splice(index, 1);
+	this.activeWordObject = null;
+
+	this.completedWords.push(word);
+
+	this.makeNewWordObject();
+};
+
+Controller.prototype.addConsecutiveLetter = function() {
+	this.consecutiveLetters++;
 }
+
+Controller.prototype.addMissedLetter = function() {
+	this.consecutiveLetters = 0;
+}
+
+//********************************************************************************************************************************************************
+//*********																WordObject 																**********
+//********************************************************************************************************************************************************
+
+
+	var WordObject = my.Class({
+
+		STATIC: {
+		  	AGE_OF_MAJORITY: 18
+		},
+
+		constructor: function(id, word, x, y, caller, recordLetter, completedWord, missedLetter) {
+			this.id = id;
+			this.word = word;
+			this.x = x;
+			this.y = y;
+			this.position = 0;
+			this.currentLetter = "-";
+			this.letters = [];
+			this.div = null;
+			callbacks = {};
+			callbacks.caller = caller;
+			callbacks.recordLetter = recordLetter;
+			callbacks.completedWord = completedWord;
+			callbacks.missedLetter = missedLetter;
+		},
+
+		init: function() {
+			var div = document.createElement('div');
+			div.id = "wordDiv";
+			div.style.top = this.y + "px";
+			div.style.left = this.x + "px";
+			var wordHtml = "";
+
+			//create the individual letter spans (so they can be colored as they are typed)
+			for (var i = 0; i < this.word.toString().length; i++) {
+				wordHtml += '<span id="letter' + i + '">' + this.word.toString()[i] + '</span>';
+			};
+
+			this.div = $(div);
+			this.div.html(wordHtml);
+			document.body.appendChild(div);
+		},
+
+		removeDiv: function() {
+			this.div.remove();
+		},
+
+		advancePosition: function() {
+			this.position++;
+
+			if (this.position >= this.word.toString().length) {
+			//finished typing the word
+				this.removeDiv();
+				callbacks.completedWord.call(callbacks.caller, this.word);
+			}
+		},
+
+		receiveKey: function(typedLetter, dt) {
+			var nextLetter = this.word.toString()[this.position];
+
+			if (typedLetter == nextLetter) {
+				callbacks.recordLetter.call(callbacks.caller, typedLetter, this.currentLetter, dt);
+				//var _letter = new Letter(typedLetter, dt, currentLetter, position);
+				//lettersTyped.push(_letter);
+
+				var letterDiv = this.div.children('#letter'+this.position);
+				letterDiv.css("color", "red");
+				this.currentLetter = nextLetter;
+				this.advancePosition();
+			} else {
+				//var _mistake = new Mistake(nextLetter, currentLetter, dt, typedLetter);
+				//mistakes.push(_mistake);
+				callbacks.missedLetter.call(callbacks.caller);
+			}
+
+		},
+
+		getFirstLetter: function() {
+			return this.word.word[0];
+		},
+
+		update: function() {},
+
+	});
+
+	console.log("testing it");
+
+	WORDS.WordObject = WordObject;
+
 
 //********************************************************************** PAGE LOADED *********************************************************************
 
-var mode = "rpg";
+var mode = "classic";
 var rpgManager = new RpgManager();
 var controller = new Controller();
 
