@@ -8,7 +8,7 @@
 			this.keys = {	"forward":38,
 							"turnL":37, 
 							"turnR":39,
-							"fire":32
+							"fire":32,
 			};
 			this.id = -1;
 			this.health = 10;
@@ -16,6 +16,8 @@
 			this.speed = 30;
 			this.velocity = {x: 0, y: 0};
 			this.rotation = 0;
+			this.tongue = null;
+			this.tongueTimer = 0;
 
 
 			//this.move();
@@ -27,7 +29,7 @@
 			this.model.position.set(this.position.x, this.position.y, this.position.z);
 			this.model.rotation.set(Math.PI/2, 0, 0);
 			// this.model.scale.set(4, 4, 4);
-			sim.graphics.scene.add(this.model);
+			sim.graphics.addModel(this.model);
 		},
 
 		setId: function(id) {
@@ -47,19 +49,71 @@
 					this.turnRight();
 					break;
 				case this.keys.fire:
-					this.fireBullet();
+					this.shootTongue();
 			}
 		},
 
-		fireBullet: function() {
+		shootTongue: function() {
+			if (this.tongueTimer > 0) {
+				return;
+			}
 
-			var model = sim.graphics.getBeamModel(1, 10, this.rotation);
-			sim.graphics.scene.add(model);
-			model.position.copy(this.position);
-			var bullet = new SIM.Projectile(model, this.position.clone(), this.rotation);
+			this.tongue = sim.graphics.getModel(sim.modelUrls.dead[2]);
+			this.setTonguePositionAndRotation();
+			sim.graphics.addModel(this.tongue);
+			this.tongueTimer = 300;
 
-			sim.addShape(bullet);
+
+
+
+
+
+
+
+
+
+			// var points = this.getTonguePoints();
+
+			// var geometry = new THREE.Geometry();
+
+			// // add new geometry based on the specified positions
+			// geometry.vertices.push(points[0]);
+			// geometry.vertices.push(points[3]);
+			// geometry.vertices.push(points[2]);
+
+			// geometry.faces.push(new THREE.Face3(0, 2, 1));
+
+			// var redMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+			// var triangle = new THREE.Mesh(geometry, redMat);
+			// sim.graphics.addModel(triangle);
+
+
+
+			// var length = 30;
+			// var width = 2;
+			// var pos2 = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * 5, Math.sin(this.rotation) * 5, 5));
+			// var pos = pos2.add(new THREE.Vector3(Math.cos(this.rotation - Math.PI/2) * width, Math.sin(this.rotation - Math.PI/2) * width, 5));
+			// var geometry = new THREE.SphereGeometry( 1, 16, 16 );
+			// var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+			// var sphere = new THREE.Mesh( geometry, material );
+			// sphere.position.copy(pos);
+			// sim.graphics.addModel( sphere );
+
+			// var pos2 = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * length, Math.sin(this.rotation) * length, 5));
+			// var point1 = pos2.add(new THREE.Vector3(Math.cos(this.rotation - Math.PI/2) * width, Math.sin(this.rotation - Math.PI/2) * width, 5));
+
+			// var length = 17.5;
+			// var pos = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * length, Math.sin(this.rotation) * length, 5));
+			// var geometry = new THREE.SphereGeometry( 1, 16, 16 );
+			// var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+			// var sphere = new THREE.Mesh( geometry, material );
+			// sphere.position.copy(pos);
+			// sim.graphics.addModel( sphere );
+
+
 		},
+
+
 
 		moveForward: function() {
 			this.velocity.x += Math.cos(this.rotation);
@@ -69,11 +123,15 @@
 		turnRight: function() {
 			this.rotation -= .4;
 			this.model.rotation.set(Math.PI/2, this.rotation, 0);
+
+			this.setTonguePositionAndRotation();
 		},
 
 		turnLeft: function() {
 			this.rotation += .4;
 			this.model.rotation.set(Math.PI/2, this.rotation, 0);
+
+			this.setTonguePositionAndRotation();
 		},
 
 		move: function(direction) {
@@ -100,73 +158,105 @@
 			this.velocity.x *= .99;
 			this.velocity.y *= .99;
 
-			// if (this.velocity < .1) this.velocity = 0;
-
 			if (this.velocity.x < .1 && this.velocity.x > -.1) this.velocity.x = 0;
 			if (this.velocity.y < .1 && this.velocity.y > -.1) this.velocity.y = 0;
-			// if (this.velocity.z < .5 && this.velocity.z > -.5) this.velocity.z = 0;
 
-			// this.velocity.x -= this.velocity.x * 10.0 * delta;
-			// this.velocity.z -= this.velocity.z * 10.0 * delta;
+			this.updatePosition(newPosition);
 
-		// 	//this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
 
-		// 	if ( this.moveForward ) this.velocity.z -= 400.0 * delta;
-		// 	if ( this.moveBackward ) this.velocity.z += 400.0 * delta;
+			this.tongueTimer -= dt;
+			if (this.tongueTimer < 0) {
+				sim.graphics.removeModel(this.tongue);
+				this.tongue = null;
+			} else {
+				this.checkIfTongueHittingBug();
+			}
 
-		// 	if ( this.moveLeft ) this.velocity.x -= 400.0 * delta;
-		// 	if ( this.moveRight ) this.velocity.x += 400.0 * delta;
+		},
 
-		// 	if ( this.isOnObject === true ) {
+		checkIfTongueHittingBug: function() {
 
-		// 		this.velocity.y = Math.max( 0, this.velocity.y );
+			var bugs = sim.getShapesOfType(SIM.Bug);
 
-		// 	}
+			for (var i = bugs.length - 1; i >= 0; i--) {
 
-		// 	var toMove = new THREE.Vector3(this.velocity.x * delta, this.velocity.y * delta, this.velocity.z * delta);
+				var bug = bugs[i];
+				if (this.bugWithinBounds(bug.position)) {
+					sim.killedBugs.push(bug.id);
+					sim.removeShape(bug);
+					sim.network.killBug(bug.id);
+				}
+			};
+		},
 
-		// 	var planes = [];
-		// 	planes.push(sim.graphics.plane);
-		// 	var newPosition = sim.controls.move(toMove);
+		bugWithinBounds: function(bug) {
+
+			var points = this.getTonguePoints();
+			var inFirstTri = this.ptInTriangle(bug, points[0], points[2], points[3]);
+			var inSecondTri = this.ptInTriangle(bug, points[0], points[1], points[3]);
+
+			return inFirstTri || inSecondTri;
+		},
+
+		getTonguePoints: function() {
+
+			var start = 5;
+			var length = 36;
+			var width = 7;
+
+			var pos2 = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * start, Math.sin(this.rotation) * start, 1));
+			var pointA = pos2.add(new THREE.Vector3(Math.cos(this.rotation - Math.PI/2) * width, Math.sin(this.rotation - Math.PI/2) * width, 0));
+
+			var pos2 = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * start, Math.sin(this.rotation) * start, 1));
+			var pointB = pos2.add(new THREE.Vector3(Math.cos(this.rotation + Math.PI/2) * width, Math.sin(this.rotation + Math.PI/2) * width, 0));
+
+			var pos2 = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * length, Math.sin(this.rotation) * length, 1));
+			var pointC = pos2.add(new THREE.Vector3(Math.cos(this.rotation - Math.PI/2) * width, Math.sin(this.rotation - Math.PI/2) * width, 0));
+
+			var pos2 = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * length, Math.sin(this.rotation) * length, 1));
+			var pointD = pos2.add(new THREE.Vector3(Math.cos(this.rotation + Math.PI/2) * width, Math.sin(this.rotation + Math.PI/2) * width, 0));
+
+			return [pointA, pointB, pointC, pointD];
+		},
+
+		ptInTriangle: function(p, p0, p1, p2) {
+		    var A = 1/2 * (-p1.y * p2.x + p0.y * (-p1.x + p2.x) + p0.x * (p1.y - p2.y) + p1.x * p2.y);
+		    var sign = A < 0 ? -1 : 1;
+		    var s = (p0.y * p2.x - p0.x * p2.y + (p2.y - p0.y) * p.x + (p0.x - p2.x) * p.y) * sign;
+		    var t = (p0.x * p1.y - p0.y * p1.x + (p0.y - p1.y) * p.x + (p1.x - p0.x) * p.y) * sign;
+		    
+		    return s > 0 && t > 0 && (s + t) < 2 * A * sign;
+		},
+
+		updatePosition: function(newPosition) {
+
+			if (newPosition.x > 100)
+				newPosition.x = -100;
+			
+			if (newPosition.x < -100)
+				newPosition.x = 100;
+			
+			if (newPosition.y > 100)
+				newPosition.y = -100;
+			
+			if (newPosition.y < -100)
+				newPosition.y = 100;
 
 			this.model.position.copy(newPosition);
 			this.position.copy(newPosition);
+			this.setTonguePositionAndRotation();
+		},
 
-		// 	if (this.velocity.x || this.velocity.y || this.velocity.z) {
-		// 	    newPosition.x = Math.round(newPosition.x * 100) / 100;
-		// 	    newPosition.y = Math.round(newPosition.y * 100) / 100;
-		// 	    newPosition.z = Math.round(newPosition.z * 100) / 100;
-		// 	    newPosition.id = 1;
-				
-		// 		this.model.playContinued("walk", 1, 2);
-		// 		sim.network.sendPlayerLocation(newPosition);
-  //           } else {
-		// 		this.model.playContinued("idle", 1, 2);
-  //           }
+		setTonguePositionAndRotation: function() {
+			if (!this.tongue)
+				return;
+
+			var length = 17.5;
+			var pos = this.position.clone().add(new THREE.Vector3(Math.cos(this.rotation) * length, Math.sin(this.rotation) * length, 5));
 
 
-
-
-		// 	this.raycaster.ray.origin.copy( newPosition );
-		// 	var collisionResults = this.raycaster.intersectObjects( planes );
-			
-
-		// // 	yawObject.translateX( this.velocity.x * delta );
-		// // 	yawObject.translateY( this.velocity.y * delta ); 
-		// // 	yawObject.translateZ( this.velocity.z * delta );
-
-		// 	if ( this.position.y < 10 ) {
-
-		// 		this.velocity.y = 0;
-		// 		this.position.y = 10;
-
-		// 		canJump = true;
-
-		// 	}
-		// 	this.moveForward = this.moveRight = this.moveLeft = this.moveBackward = false;
-
-		// 	// sim.controls.move(this.position);
-
+			this.tongue.rotation.set(Math.PI/2, this.rotation - Math.PI/2, 0);
+			this.tongue.position.copy(pos);
 		},
 
 

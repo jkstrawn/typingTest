@@ -5,7 +5,6 @@
 		constructor: function() {
 
 			this.sphere = null;
-			this.toIncrease = 1.02;
 			this.renderer = null;
 			this.scene = null;
 			this.camera = null;
@@ -68,14 +67,6 @@
 
 
 
-
-
-
-
-
-
-
-
 			var vector = new THREE.Vector3( 0, 0, -1 );
 			vector.applyQuaternion( this.camera.quaternion );
 			this.camera.position.add( vector.multiplyScalar( -30 ));
@@ -84,98 +75,16 @@
 
 		},
 
-		createMobModel: function() {
-			var mapB = THREE.ImageUtils.loadTexture( "res/textures/archer.png" );
-
-			var materialB = new THREE.SpriteMaterial( { map: mapB, color: 0xffffff} );
-			var material = materialB.clone();
-
-			var sprite = new THREE.Sprite( material );
-			sprite.scale.set( 10, 20, 1 );
-			return sprite;
-		},
-
-		createCircleAroundMob: function(x, y, z) {
-			var material = new THREE.MeshBasicMaterial({
-				color: 0x00ff00, transparent: true, opacity: .2
-			});
-
-			var radius = 50;
-			var segments = 32;
-
-			var circleGeometry = new THREE.CircleGeometry( radius, segments );				
-			var circle = new THREE.Mesh( circleGeometry, material );
-			circle.rotation.x = -Math.PI / 2;
-			circle.position.set(x, y + .1, z);
-			this.scene.add( circle );
-		},
-
-		createPlayer: function() {
-
-			model = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), new THREE.MeshLambertMaterial({color: 0xcccccc}));
-			this.scene.add(model);
-			return model;
-		},
-
-		movePlayer: function(player, dataModel) {
-			player.model.position.x = dataModel.x;
-			player.model.position.y = dataModel.y;
-			player.model.position.z = dataModel.z;
-			player.model.rotation.y = dataModel.rotation;
-		},
-
-		getBeamModel: function(width, length, rotation) {
-
-
-			var lightTexture = THREE.ImageUtils.loadTexture("res/textures/light4.png");
-			var lightMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF99, map: lightTexture, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, side: THREE.DoubleSide });
-			
-			var lightBeamShape = new THREE.PlaneBufferGeometry(length, width, width, 100);
-			var lightBeamMesh = new THREE.Mesh(lightBeamShape, lightMaterial);
-			
-
-			lightBeamMesh.rotation.set(0, 0, rotation);
-
-			return lightBeamMesh;
-		},
-
-		getCustomMaterial: function(index, camera) {
-
-
-			var fShader = THREE.FresnelShader;
-			
-			var fresnelUniforms = 
-			{
-				"mRefractionRatio": { type: "f", value: 1.02 },
-				"mFresnelBias": 	{ type: "f", value: 0.1 },//0.1
-				"mFresnelPower": 	{ type: "f", value: 2.0 }, //2.0
-				"mFresnelScale": 	{ type: "f", value: 1.0 }, //1.0
-				"tCube": 			{ type: "t", value: camera.renderTarget } //  textureCube }
-			};
-			
-			// create custom material for the shader
-			var customMaterial = new THREE.ShaderMaterial( 
-			{
-			    uniforms: 		fresnelUniforms,
-				vertexShader:   fShader.vertexShader,
-				fragmentShader: fShader.fragmentShader
-			}   );
-			
-			return customMaterial;
-		},
-
 		addGround: function() {
-
-
 
 			var floorTexture = new THREE.ImageUtils.loadTexture( 'res/textures/swamp.jpg' );
 			floorTexture.anisotropy = 16;
 			floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
 			floorTexture.repeat.set( 10, 10 );
 			var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-			var floorGeometry = new THREE.PlaneGeometry(1200, 1200, 50, 50);
+			var floorGeometry = new THREE.PlaneGeometry(200, 200, 10, 10);
 			var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-			floor.position.set(0, 0, -20);
+			// floor.position.set(0, 0, 0);
 			//floor.rotation.x = Math.PI / 2;
 			this.scene.add(floor);
 		},
@@ -206,7 +115,6 @@
 			loader.load( url, function ( geometry, materials ) {
 
 				var faceMaterial = new THREE.MeshFaceMaterial( materials );
-				console.log(faceMaterial);
 				var model = new THREE.Mesh( geometry, faceMaterial );
 
 				that.models.push({
@@ -281,7 +189,7 @@
 							if (thing.material instanceof THREE.MeshLambertMaterial) {
 								//thing.material.map.magFilter = THREE.LinearFilter;
 								//thing.material.map.minFilter = THREE.NearestMipMapLinearFilter;
-								//thing.material.map.anisotropy = 16;
+								thing.material.map.anisotropy = 16;
 							}
 						});						
 					}
@@ -296,18 +204,9 @@
 
 		addCamera: function() {
 
-			// var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
-			// var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
-			// this.camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
-			// //this.scene.add(this.camera);
-			// this.camera.position.set(0, 150, 400);
-			// this.camera.lookAt(new THREE.Vector3( 0, 0, 0 ));	
-
-			this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.5, 3000000 );
-			this.camera.position.set( 0, 0, 100 );
+			this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 2000 );
+			this.camera.position.set( 0, 0, 175 );
 			this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
-
-			// this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000000 );
 		},
 
 		addLights: function() {
@@ -315,132 +214,19 @@
 			hemiLight.position.set( 0, 500, 0 );
 			this.scene.add(hemiLight);
 
-			//var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
-			//hemiLight.color.setHSL( .5, .5, .5 );
-			//hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-			//hemiLight.position.set( 0, 500, 0 );
-			//this.scene.add( hemiLight );
-
 			var ambientLight = new THREE.AmbientLight( 0xffffff );
 			this.scene.add( ambientLight );
 
 			sim.pointLight = new THREE.PointLight( 0xffcc00, 2, 30 );
 			sim.pointLight.position.set( 0, 100, 0 );
 			this.scene.add( sim.pointLight );
-
-
-
-			// var spotlight3 = new THREE.SpotLight(0xffffff);
-			// spotlight3.position.set(100, 60, 0);
-			// spotlight3.shadowDarkness = 0.7;
-			// spotlight3.intensity = 2;
-			// spotlight3.castShadow = true;
-			// spotlight3.shadowCameraFov = 100;
-			// spotlight3.shadowCameraFar = 150;
-			// var lightTarget = new THREE.Object3D();
-			// lightTarget.position.set(120, 0, 0);
-			// spotlight3.target = lightTarget;
-			// this.scene.add(spotlight3);
-			// sim.l = spotlight3;
 		},
 
 		addRendered: function() {
-
-			this.renderer = new THREE.WebGLRenderer( { 
-				antialias: true, 
-				alpha: false, 
-				clearColor: 0xfafafa, 
-				clearAlpha: 1, 
-				shadowMapEnabled: true,
-				shadowMapType: THREE.PCFSoftShadowMap
-
-			} );
-
+			this.renderer = new THREE.WebGLRenderer();
+			this.renderer.setPixelRatio( window.devicePixelRatio );
 			this.renderer.setSize( window.innerWidth, window.innerHeight );
-			this.renderer.domElement.style.position = "relative";
 			this.container.appendChild( this.renderer.domElement );
-
-			this.renderer.setClearColor( this.scene.fog.color, 1 );
-
-			this.renderer.gammaInput = true;
-			this.renderer.gammaOutput = true;
-			this.renderer.physicallyBasedShading = true;
-
-			this.renderer.shadowMapEnabled = true;
-			this.renderer.shadowMapSoft = true;
-
-// this.renderer.shadowCameraNear = 3;
-// this.renderer.shadowCameraFar = this.camera.far;
-// this.renderer.shadowCameraFov = 50;
-
-// this.renderer.shadowMapBias = 0.0039;
-// this.renderer.shadowMapDarkness = 0.5;
-// this.renderer.shadowMapWidth = 1024;
-// this.renderer.shadowMapHeight = 1024;
-		},
-
-		addSkyDome: function() {
-
-			var cubeMap = new THREE.CubeTexture( [] );
-			cubeMap.format = THREE.RGBFormat;
-			cubeMap.flipY = false;
-
-			var loader = new THREE.ImageLoader();
-			loader.load( 'res/textures/marsh.jpg', function ( image ) {
-				var getSide = function ( x, y ) {
-					var size = 512;
-
-					var canvas = document.createElement( 'canvas' );
-					canvas.width = size;
-					canvas.height = size;
-
-					var context = canvas.getContext( '2d' );
-					context.drawImage( image, - x * size, - y * size );
-
-					return canvas;
-
-				};
-
-				cubeMap.images[ 0 ] = getSide( 2, 1 ); // px
-				cubeMap.images[ 1 ] = getSide( 0, 1 ); // nx
-				cubeMap.images[ 2 ] = getSide( 1, 0 ); // py
-				cubeMap.images[ 3 ] = getSide( 1, 2 ); // ny
-				cubeMap.images[ 4 ] = getSide( 1, 1 ); // pz
-				cubeMap.images[ 5 ] = getSide( 3, 1 ); // nz
-				cubeMap.needsUpdate = true;
-
-			} );
-
-			var cubeShader = THREE.ShaderLib['cube'];
-			cubeShader.uniforms['tCube'].value = cubeMap;
-
-			var skyBoxMaterial = new THREE.ShaderMaterial( {
-				fragmentShader: cubeShader.fragmentShader,
-				vertexShader: cubeShader.vertexShader,
-				uniforms: cubeShader.uniforms,
-				depthWrite: false,
-				side: THREE.BackSide
-			});
-
-			var skyBox = new THREE.Mesh(
-				new THREE.BoxGeometry( 1000000, 1000000, 1000000 ),
-				skyBoxMaterial
-			);
-			
-			this.scene.add( skyBox );
-		},
-
-		getHoveredShape: function(shapes) {
-
-			var vector = new THREE.Vector3( this.mouse.x, this.mouse.y, 1 );
-			this.projector.unprojectVector( vector, this.camera );
-			this.raycaster.set( this.camera.position, vector.sub( this.camera.position ).normalize() );
-			var intersects = this.raycaster.intersectObjects( shapes, true );
-
-			if ( intersects.length > 0 ) {
-				return this.getParent(intersects[0].object);
-			}
-			return null;
 		},
 
 		getParent: function(model) {
@@ -465,43 +251,6 @@
 
 			this.mouse.x = newX;
 			this.mouse.y = newY;
-
-			if (this.mouse.isRightDown) {
-				console.log("move");
-
-				var glowMaterial = this.getCustomMaterial(this.toIncrease);
-
-				this.sphere.material = glowMaterial;
-
-				this.toIncrease -= .01;
-				console.log(this.toIncrease);
-			}
-
-
-
-
-			// camRot = sim.controls.getRotation();
-
-			// var vector = new THREE.Vector3( -3, 0, -3 );
-			// var axis = new THREE.Vector3( 0, 1, 0 );
-			// vector.applyAxisAngle( axis, camRot.y - Math.PI/2 );
-			// playerPos = sim.player.model.position;
-			// vector.add(playerPos);
-			// sim.box.position.set(vector.x, vector.y + 6, vector.z);
-
-
-
-			// var camDir = sim.controls.getDirection();
-			// camPos = sim.controls.getPosition();
-			// handPos = camPos.multiply(new THREE.Vector3(.01, .01, 0));
-			// newPosition = camDir.multiply(new THREE.Vector3(250, 250, 250)).add(sim.box.position);
-
-
-
-
-			// this.beam.rotation.set(0, camRot.y - Math.PI/2, -camRot.x);
-			// this.beam.position.set(newPosition.x, newPosition.y, newPosition.z);
-
 		},
 
 		getMousePositionByZ: function(event, z) {
@@ -524,27 +273,11 @@
 
 		resize: function() {
 			
-			this.camera.aspect = window.innerWidth / window.innerHeight;
-			this.camera.updateProjectionMatrix();
+			// this.camera.aspect = window.innerWidth / window.innerHeight;
+			// this.camera.updateProjectionMatrix();
 
-			this.renderer.setSize( window.innerWidth, window.innerHeight );
+			// this.renderer.setSize( window.innerWidth, window.innerHeight );
 
-		},
-
-		focusCamera: function(x, y, z) {
-
-			var cameraZ = this.camera.position.z;
-
-			var tween = new TWEEN.Tween(this.camera.position).to({
-			    x: x,
-			    y: y + cameraZ / 2 - 15,
-			    z: cameraZ
-			}, 800).easing(TWEEN.Easing.Linear.None).onUpdate(function (time) {
-				//console.log(test + " at " + new Date())
-			    //that.camera.lookAt(new THREE.Vector3(x,y,cameraZ));
-			}).onComplete(function () {
-			    //that.camera.lookAt(new THREE.Vector3(x,y,cameraZ));
-			}).start();
 		},
 
 		zoom: function(increase) {
@@ -586,32 +319,12 @@
 
 		render: function() {
 
-
-			// this.sphere.visible = false;
-			// this.refractSphereCamera.updateCubeMap( this.renderer, this.scene );
-			// this.sphere.visible = true;
-			// this.sphere2.visible = false;
-			// this.refractSphereCamera2.updateCubeMap( this.renderer, this.scene );
-			// this.sphere2.visible = true;
-
 			this.particles.render();
 			this.renderer.render( this.scene, this.camera );
 			TWEEN.update();
 		},
 
 		update: function(dt) {
-
-
-			//var glowMaterial = this.getCustomMaterial(this.toIncrease, this.refractSphereCamera);
-
-			//this.sphere.material = glowMaterial.clone();
-			//this.sphere2.material = glowMaterial.clone();
-
-			this.toIncrease -= .005;
-			if (this.toIncrease < -1)
-				this.toIncrease = 1;
-			//console.log(this.toIncrease);
-			//this.controls.update();
 			THREE.AnimationHandler.update( dt / 1000 );
 		},
 

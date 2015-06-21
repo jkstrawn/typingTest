@@ -26,6 +26,10 @@
 			this.socket.emit('move', { position: position });
 		},
 
+		killBug: function(id) {
+			this.socket.emit('killBug', {id: id});
+		},
+
 	});
 
 	SIM.Network = Network;

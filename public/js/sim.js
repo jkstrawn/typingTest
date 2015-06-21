@@ -9,23 +9,24 @@
 
 			this.otherPlayers = [];
 			this.shapes = [];
+			this.killedBugs = [];
 			this.pointLight = null;
 			this.stats = null;
 
 			this.clock = new THREE.Clock();
 			this.gui = null;
+			this.keys = [];
 			this.controls = new SIM.Controls();
 			this.graphics = new SIM.GraphicsEngine();
 			this.audio = new SIM.AudioManager();
 			this.events = new SIM.EventManager();
 			this.player = new SIM.Player();
-			this.keys = [];
 			this.network = new SIM.Network();
 
 			this.modelUrls = {
 				dead: [
 					"res/models/frog/frog_final2.json",
-					"res/models/meteor/meteor3.json",
+					"res/models/bug/bugLowRes.js",
 					"res/models/frog/tongue.json",
 				],
 				live: [
@@ -245,20 +246,30 @@
 		createAsteroid: function(mobData) {
 			console.log("creating asteroid with id of " + mobData.id);
 			var model = this.graphics.getModel(this.modelUrls.dead[1]);
-			model.scale.set(mobData.size / 2, mobData.size / 2, mobData.size / 2);
+			model.scale.set(mobData.size / 4, mobData.size / 4, mobData.size / 4);
 			model.position.set(mobData.pos.x, mobData.pos.y, 0);
 			this.graphics.addModel(model);
-			var shape = new SIM.Meteor(mobData.id, model, mobData.size);
+			var shape = new SIM.Bug(mobData.id, model, mobData.size);
 			this.shapes.push(shape);
 		},
 
 		updateAsteroid: function(mobData) {
-			var asteroid = this.getShapeWithId(mobData.id)
+			if (this.bugIsKilled(mobData.id))
+				return;
+			var asteroid = this.getShapeWithId(mobData.id);
 			if (asteroid) {
-				asteroid.updatePosition(mobData.pos);
+				asteroid.updatePosition(mobData.pos, mobData.rot);
 			} else {
 				this.createAsteroid(mobData);
 			}
+		},
+
+		bugIsKilled: function (id) {
+			for (var i = this.killedBugs.length - 1; i >= 0; i--) {
+				if (this.killedBugs[i] == id)
+					return true;
+			};
+			return false;
 		},
 
 		getShapeWithId: function(id) {

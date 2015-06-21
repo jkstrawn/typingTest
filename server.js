@@ -33,6 +33,10 @@ io.on('connection', function(socket) {
 		msg.id = id;
 		//io.emit('moved', msg);
 	});
+
+	socket.on("killBug", function(msg) {
+		removeFromList(mobs, msg.id);
+	});
 });
 
 http.listen(port, function() {
@@ -40,13 +44,11 @@ http.listen(port, function() {
 });
 
 var init = function() {
-	var position = new THREE.Vector3(20, 0, 0);
-	var meteor = new Meteor(100, 8, position, Math.random(Math.PI), 2);
-	mobs.push(meteor);
-
-	var position2 = new THREE.Vector3(0, 20, 0);
-	var meteor2 = new Meteor(101, 8, position2, Math.random(Math.PI), 2);
-	mobs.push(meteor2);
+	for (var i = 0; i < 10; i++) {
+		var position = new THREE.Vector3(Math.random() * 100 - 50, Math.random() * 200 - 100, 0);
+		var meteor = new Meteor(100 + i, 8, position);
+		mobs.push(meteor);
+	}
 };
 
 var minifyList = function(list) {
@@ -67,6 +69,14 @@ var getOtherPlayers = function(id) {
 	return others;
 };
 
+var removeFromList = function(list, id) {
+	for (var i = list.length - 1; i >= 0; i--) {
+		if (list[i].id == id) {
+			list.splice(i, 1);
+			return true;
+		}
+	};
+};
 
  
 // start the loop at 30 fps (1000/30ms per frame) and grab its id 
@@ -97,15 +107,15 @@ var id = gameloop.setGameLoop(function(delta) {
 
 
 var Meteor = my.Class({
-	constructor: function(id, size, position, direction, speed) {
+	constructor: function(id, size, position, speed) {
 		this.id = id;
 		this.size = size;
 		this.position = position;
-		this.speed = speed;
-		this.velocity = {
-			x: Math.cos(direction), 
-			y: Math.sin(direction)
-		};
+		this.speed = speed || 15;
+		this.direction = 0;
+		this.velocity = null;
+
+		this.changeDirection();
 	},
 
 	update: function(dt) {
@@ -114,7 +124,32 @@ var Meteor = my.Class({
 		var dy = this.velocity.y * dt * this.speed;
 
 		this.position.add(new THREE.Vector3(dx, dy, 0));
+
+		if (this.position.x > 100)
+			this.position.x = -100;
+		
+		if (this.position.x < -100)
+			this.position.x = 100;
+		
+		if (this.position.y > 100)
+			this.position.y = -100;
+		
+		if (this.position.y < -100)
+			this.position.y = 100;
+
 		// console.log("moved to " + this.position.x + " and " + this.position.y);
+		if (Math.random() > .9) {
+			this.changeDirection();
+		}
+	},
+
+	changeDirection: function() {
+		var directionChange = Math.random() * 1.5 - .75;
+		this.direction += directionChange;
+		this.velocity = {
+			x: Math.cos(this.direction), 
+			y: Math.sin(this.direction)
+		};
 	},
 
 	breakApart: function() {
@@ -122,7 +157,7 @@ var Meteor = my.Class({
 	},
 
 	getMin: function() {
-		return {id: this.id, size: this.size, pos: {x: this.position.x, y: this.position.y}};
+		return {id: this.id, size: this.size, pos: {x: this.position.x, y: this.position.y}, rot: this.direction};
 	},
 
 });

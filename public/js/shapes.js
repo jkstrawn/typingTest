@@ -510,4 +510,38 @@
 
 	SIM.Meteor = Meteor;
 
+
+	var Bug = my.Class(SIM.Shape, {
+		constructor: function(id, model, size) {
+			Bug.Super.call(this, model);
+
+			this.id = id;
+			this.size = size;
+			this.rotation = 0;
+			this.position = model.position.clone();
+
+			this.model.rotation.set(Math.PI/2, 0, 0);
+		},
+
+		update: function(dt) {
+			// this.rotation += .01;
+			// this.model.rotation.set(this.rotation, this.rotation / 2, 0);
+		},
+
+		breakApart: function() {
+
+		},
+
+		updatePosition: function(position, rotation) {
+			this.model.rotation.set(Math.PI/2, rotation + Math.PI/2, 0);
+			this.position.set(position.x, position.y, 0);
+			// console.log(this.position);
+			this.model.position.copy(this.position);
+			// console.log("new position");
+		},
+
+	});
+
+	SIM.Bug = Bug;
+
 })();
