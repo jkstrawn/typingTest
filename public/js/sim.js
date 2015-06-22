@@ -386,6 +386,7 @@
 
 			this.graphics.update(dt);
 
+			this.player.sendKeys(this.keys);
 			this.player.update(dt);
 			//this.controls.update();
 

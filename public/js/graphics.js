@@ -18,11 +18,7 @@
 			this.tempObjects = [];
 			this.particles = new SIM.ParticleSystem();
 
-			this.eyeX = 0;
-			this.eyeY = -200;
-			this.eyeZ = 400;
-			this.cameraAngle1 = 180;
-			this.cameraAngle2 = 45;
+			this.staminaBar = null;
 
 			this.parameters = {
 				width: 2000,
@@ -37,7 +33,7 @@
 
 		addCamera: function() {
 
-			this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth/2 / window.innerHeight, 1, 2000 );
+			this.camera = new THREE.PerspectiveCamera( 55, (window.innerWidth - 300) / (window.innerHeight), 1, 2000 );
 			this.camera.position.set( 0, 0, 175 );
 			this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 		},
@@ -58,7 +54,7 @@
 		addRenderer: function() {
 			this.renderer = new THREE.WebGLRenderer();
 			this.renderer.setPixelRatio( window.devicePixelRatio );
-			this.renderer.setSize( window.innerWidth/2, window.innerHeight );
+			this.renderer.setSize( window.innerWidth - 300, window.innerHeight );
 			// console.log(this.renderer.domElement);
 			this.container.appendChild( this.renderer.domElement );
 		},
@@ -254,6 +250,8 @@
 			var vector = new THREE.Vector3( 0, 0, -1 );
 			vector.applyQuaternion( this.camera.quaternion );
 			this.camera.position.add( vector.multiplyScalar( -30 ));
+
+			this.drawStaminaBar();
 		},
 
 
@@ -265,9 +263,9 @@
 			var floorTexture = new THREE.ImageUtils.loadTexture( 'res/textures/swamp.jpg' );
 			floorTexture.anisotropy = 16;
 			floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
-			floorTexture.repeat.set( 10, 10 );
+			floorTexture.repeat.set( 2, 2 );
 			var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-			var floorGeometry = new THREE.PlaneGeometry(200, 200, 10, 10);
+			var floorGeometry = new THREE.PlaneGeometry(200, 200, 2, 2);
 			var floor = new THREE.Mesh(floorGeometry, floorMaterial);
 			// floor.position.set(0, 0, 0);
 			//floor.rotation.x = Math.PI / 2;
@@ -289,11 +287,21 @@
 			this.scene.add(room);
 		},
 
-		addBoundingBox: function(gridSection) {
+		drawStaminaBar: function() {
+			var geometry = new THREE.PlaneGeometry( 5 , 10 );
+			var material = new THREE.MeshBasicMaterial( {color: 0x22aa22, side: THREE.DoubleSide} );
+			this.staminaBar = new THREE.Mesh( geometry, material );
+			this.staminaBar.position.set(-100 + 2.5, 100, 1);
+			this.scene.add( this.staminaBar );
+		},
 
-			gridSection.updateMaterialVector(this.camera.position);
-			this.tempObjects.push(gridSection.model);
-			this.scene.add(gridSection.model);
+		updateStaminaBar: function(amount) {
+			this.scene.remove(this.staminaBar);
+			var geometry = new THREE.PlaneGeometry( amount , 10 );
+			var material = new THREE.MeshBasicMaterial( {color: 0x22aa22, side: THREE.DoubleSide} );
+			this.staminaBar = new THREE.Mesh( geometry, material );
+			this.staminaBar.position.set(-100 + amount/2, 100, 1);
+			this.scene.add( this.staminaBar );
 		},
 	});
 

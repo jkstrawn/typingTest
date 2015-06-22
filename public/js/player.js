@@ -18,6 +18,7 @@
 			this.rotation = 0;
 			this.tongue = null;
 			this.tongueTimer = 0;
+			this.stamina = 5;
 
 
 			//this.move();
@@ -36,27 +37,46 @@
 			this.id = id;
 		},
 
+		sendKeys: function(keys) {
+			for (var i = keys.length - 1; i >= 0; i--) {
+				switch (keys[i]) {
+
+					case this.keys.turnL:
+						this.turnLeft();
+						break;
+					case this.keys.turnR:
+						this.turnRight();
+						break;
+				}
+			};
+		},
+
 		keyActive: function(key) {
 			switch (key) {
 
 				case this.keys.forward:
 					this.moveForward();
 					break;
-				case this.keys.turnL:
-					this.turnLeft();
-					break;
-				case this.keys.turnR:
-					this.turnRight();
-					break;
 				case this.keys.fire:
 					this.shootTongue();
 			}
 		},
 
+		addStamina: function() {
+			this.stamina += 5;
+			sim.graphics.updateStaminaBar(this.stamina);
+		},
+
 		shootTongue: function() {
+			if (this.stamina < 1) {
+				return;
+			}
 			if (this.tongueTimer > 0) {
 				return;
 			}
+
+			this.stamina--;
+			sim.graphics.updateStaminaBar(this.stamina);
 
 			this.tongue = sim.graphics.getModel(sim.modelUrls.dead[2]);
 			this.setTonguePositionAndRotation();
@@ -116,19 +136,25 @@
 
 
 		moveForward: function() {
+			if (this.stamina < 1) {
+				return;
+			}
+
+			this.stamina--;
+			sim.graphics.updateStaminaBar(this.stamina);
 			this.velocity.x += Math.cos(this.rotation);
 			this.velocity.y += Math.sin(this.rotation);
 		},
 
 		turnRight: function() {
-			this.rotation -= .4;
+			this.rotation -= .1;
 			this.model.rotation.set(Math.PI/2, this.rotation, 0);
 
 			this.setTonguePositionAndRotation();
 		},
 
 		turnLeft: function() {
-			this.rotation += .4;
+			this.rotation += .1;
 			this.model.rotation.set(Math.PI/2, this.rotation, 0);
 
 			this.setTonguePositionAndRotation();

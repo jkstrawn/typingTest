@@ -100,6 +100,7 @@ function Controller() {
 	this.lettersTyped = [];
 	this.mistakes = [];
 	this.wordsTyped = [];
+	this.nextWords = [];
 
 	this.letterStatList = [];
 
@@ -129,12 +130,44 @@ Controller.prototype.init = function(wordList) {
 	this.setallPossibleWords(wordList);
 	this.wordsLeft = this.allPossibleWords.length;
 
-	this.makeNewWordObject("leftColumn");
-	this.makeNewWordObject("rightColumn");
-	this.makeNewWordObject("forwardColumn");
-	this.makeNewWordObject("fireColumn");
+	for (var i = 0; i < 5; i++) {
+		this.generateNextWord();
+	}
+	this.activateNextWord();
+	// this.makeNewWordObject();
 	// this.displayLetterTime();
 }
+
+Controller.prototype.activateNextWord = function() {
+
+	var lastWord = this.nextWords.pop();
+	lastWord.tr.remove();
+
+	this.generateNextWord();
+	var word = lastWord.word;
+	this.putWordOntoPage(word);
+},
+
+Controller.prototype.generateNextWord = function() {
+	var word = this.getAnUnusedWord();
+	var wordObject = {word: word};
+
+	var table = document.getElementById("wordColumn").children[0];
+	var tr = document.createElement('tr');
+	var td = document.createElement('td');
+	var div = document.createElement('div');
+	div.class = "nextWord";
+	div.innerHTML = word;
+
+	wordObject.tr = $(tr);
+
+	td.appendChild(div);
+	tr.appendChild(td);
+	table.insertBefore(tr, table.firstChild);
+	// table.appendChild(tr);
+
+	this.nextWords.unshift(wordObject);
+};
 
 //Initiate the list of all words that can be used
 Controller.prototype.setallPossibleWords = function(wordsList) {
@@ -149,9 +182,9 @@ Controller.prototype.setallPossibleWords = function(wordsList) {
 	});
 }
 
-Controller.prototype.makeNewWordObject = function(columnId) {
-	var word = this.getAnUnusedWord();
-	this.putWordOntoPage(word, columnId);
+Controller.prototype.makeNewWordObject = function() {
+	// var word = this.getAnUnusedWord();
+	// this.putWordOntoPage(word);
 }
 
 Controller.prototype.getFirstLetters = function() {
@@ -243,8 +276,9 @@ Controller.prototype.getUnusedWord = function() {
 }
 */
 //Set the word onto page for the user to type
-Controller.prototype.putWordOntoPage = function(word, columnId) {
-	this.createWordObjects(columnId);
+Controller.prototype.putWordOntoPage = function(word) {
+	console.log(word);
+	this.createWordObjects(word);
 
 	var score = word.getDifficulty();
 	var wordScoreDiv = $('#wordScoreDiv');	
@@ -252,11 +286,11 @@ Controller.prototype.putWordOntoPage = function(word, columnId) {
 	wordScoreDiv.html(Number((score).toFixed(3)));
 };
 
-Controller.prototype.createWordObjects = function(columnId) {
+Controller.prototype.createWordObjects = function(word) {
 
 
-		var word = this.getAnUnusedWord();
-		var wordObject = new WORDS.WordObject("id", word, this, this.recordLetter, this.addCompletedWord, this.addMissedLetter, columnId);
+		// var word = this.getAnUnusedWord();
+		var wordObject = new WORDS.WordObject("id", word, this, this.recordLetter, this.addCompletedWord, this.addMissedLetter);
 		wordObject.init();
 		this.wordObjects.push(wordObject);
 
@@ -391,16 +425,17 @@ Controller.prototype.convert = function(index) {
 	}
 };
 
-Controller.prototype.addCompletedWord = function(word, columnId) {
+Controller.prototype.addCompletedWord = function(word) {
 	var index = this.wordObjects.indexOf(this.activeWordObject);
 	this.wordObjects.splice(index, 1);
 	this.activeWordObject = null;
 
 	this.completedWords.push(word);
 
-	this.makeNewWordObject(columnId);
+	this.activateNextWord();
+	// this.makeNewWordObject();
 
-	sim.doCommand(columnId);
+	sim.player.addStamina();
 };
 
 Controller.prototype.addConsecutiveLetter = function() {
@@ -422,14 +457,13 @@ Controller.prototype.addMissedLetter = function() {
 		  	AGE_OF_MAJORITY: 18
 		},
 
-		constructor: function(id, word, caller, recordLetter, completedWord, missedLetter, columnId) {
+		constructor: function(id, word, caller, recordLetter, completedWord, missedLetter) {
 			this.id = id;
 			this.word = word;
 			this.position = 0;
 			this.currentLetter = "-";
 			this.letters = [];
 			this.div = null;
-			this.columnId = columnId;
 
 			callbacks = {};
 			callbacks.caller = caller;
@@ -439,7 +473,7 @@ Controller.prototype.addMissedLetter = function() {
 		},
 
 		init: function() {
-			var table = document.getElementById(this.columnId).children[0];
+			var table = document.getElementById("wordColumn").children[0];
 			var tr = document.createElement('tr');
 			var td = document.createElement('td');
 			var div = document.createElement('div');
@@ -470,7 +504,7 @@ Controller.prototype.addMissedLetter = function() {
 			if (this.position >= this.word.toString().length) {
 			//finished typing the word
 				this.removeDiv();
-				callbacks.completedWord.call(callbacks.caller, this.word, this.columnId);
+				callbacks.completedWord.call(callbacks.caller, this.word);
 			}
 		},
 
