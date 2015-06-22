@@ -154,17 +154,37 @@ Controller.prototype.makeNewWordObject = function(columnId) {
 	this.putWordOntoPage(word, columnId);
 }
 
-Controller.prototype.getAnUnusedWord = function() {
+Controller.prototype.getFirstLetters = function() {
+	var firstLetters = [];
+
+	for (var i = this.wordObjects.length - 1; i >= 0; i--) {
+		firstLetters.push(this.wordObjects[i].word[0]);
+	};
+
+	return firstLetters;
+};
+
+Controller.prototype.getAnUnusedWord = function(allStartingLetters) {
 	if (this.wordsLeft == 0) {
 		this.wordsLeft = this.allPossibleWords.length;
 	}
-	var index = Math.floor(Math.random() * this.wordsLeft);
-	var word = this.allPossibleWords[index];
-	console.log("chose " + index + " out of " + this.wordsLeft + " : " + word);
-	this.moveWordToEndOfWordList(index);
-	this.wordsLeft--;
+	var letters = this.getFirstLetters();
 
-	return word;
+	var shortCircuit = 1000;
+	for (var i = 0; i < shortCircuit; i++) {
+		var index = Math.floor(Math.random() * this.wordsLeft);
+		var word = this.allPossibleWords[index];
+		if (letters.indexOf(word.word[0]) == -1) {
+			console.log("chose " + index + " out of " + this.wordsLeft + " : " + word);
+			this.moveWordToEndOfWordList(index);
+			this.wordsLeft--;
+
+			return word;
+		}
+	}
+
+	console.log("searched 1000 words but found no appropriate word");
+	return null;
 }
 
 Controller.prototype.moveWordToEndOfWordList = function(index) {

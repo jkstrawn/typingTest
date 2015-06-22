@@ -238,7 +238,7 @@
 		},
 
 		createAsteroid: function(mobData) {
-			console.log("creating asteroid with id of " + mobData.id);
+			// console.log("creating asteroid with id of " + mobData.id);
 			var model = this.graphics.getModel(this.modelUrls.dead[1]);
 			model.scale.set(mobData.size / 4, mobData.size / 4, mobData.size / 4);
 			model.position.set(mobData.pos.x, mobData.pos.y, 0);
