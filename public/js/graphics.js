@@ -35,75 +35,32 @@
 			};
 		},
 
-		init: function(urls, callback) {
+		addCamera: function() {
 
-			this.container = document.createElement( 'div' );
-			document.body.appendChild( this.container );
-
-			stats = new Stats();
-			this.container.appendChild( stats.domElement );
-			this.scene = new THREE.Scene();
-			this.projector = new THREE.Projector();
-			this.scene.fog = new THREE.Fog( 0xffffff, 1000, 10000 );
-
-			this.addCamera();
-			this.addLights();
-			this.addRendered();
-
-			this.addGround();
-
-
-			//this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-            
-			this.numModelsToLoad = urls.dead.length + urls.live.length;
-			for (var i = urls.dead.length - 1; i >= 0; i--) {
-				this.loadModel(urls.dead[i], callback);
-			};
-			for (var i = urls.live.length - 1; i >= 0; i--) {
-				this.loadAnimated(urls.live[i], callback);
-			};
-			//callback();
-			this.particles.init(this.scene);
-
-
-
-			var vector = new THREE.Vector3( 0, 0, -1 );
-			vector.applyQuaternion( this.camera.quaternion );
-			this.camera.position.add( vector.multiplyScalar( -30 ));
-
-
-
+			this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth/2 / window.innerHeight, 1, 2000 );
+			this.camera.position.set( 0, 0, 175 );
+			this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 		},
 
-		addGround: function() {
+		addLights: function() {
+			var hemiLight = new THREE.HemisphereLight(0x404040, 0x404040, .6);
+			hemiLight.position.set( 0, 500, 0 );
+			this.scene.add(hemiLight);
 
-			var floorTexture = new THREE.ImageUtils.loadTexture( 'res/textures/swamp.jpg' );
-			floorTexture.anisotropy = 16;
-			floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
-			floorTexture.repeat.set( 10, 10 );
-			var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-			var floorGeometry = new THREE.PlaneGeometry(200, 200, 10, 10);
-			var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-			// floor.position.set(0, 0, 0);
-			//floor.rotation.x = Math.PI / 2;
-			this.scene.add(floor);
+			var ambientLight = new THREE.AmbientLight( 0xffffff );
+			this.scene.add( ambientLight );
+
+			sim.pointLight = new THREE.PointLight( 0xffcc00, 2, 30 );
+			sim.pointLight.position.set( 0, 100, 0 );
+			this.scene.add( sim.pointLight );
 		},
 
-		addRoomSpotParticles: function(startX, startY, segments, gridWidth, gridLength) {
-
-			var position = new THREE.Vector3(startX + 4, startY, 4);
-			var width = gridWidth * segments - 8;
-			var length = gridLength - 8;
-
-			this.particles.addBoundingEmitter(position, width, length, segments);
-		},
-
-		addFlame: function(position) {
-
-			var flameLight = new THREE.PointLight( 0xffcc00, 1.5, 20 );
-			flameLight.position.set(position.x, position.y, position.z);
-			this.scene.add( flameLight );
-			this.particles.addFlameEmitter(position);
+		addRenderer: function() {
+			this.renderer = new THREE.WebGLRenderer();
+			this.renderer.setPixelRatio( window.devicePixelRatio );
+			this.renderer.setSize( window.innerWidth/2, window.innerHeight );
+			// console.log(this.renderer.domElement);
+			this.container.appendChild( this.renderer.domElement );
 		},
 
 		loadModel: function(url, callback) {
@@ -151,94 +108,44 @@
 			});
 		},
 
-		removeDraggingObjects: function() {
-			for (var i = this.tempObjects.length - 1; i >= 0; i--) {
-				this.scene.remove(this.tempObjects[i]);
-			};
+		resize: function() {
+			
+			// this.camera.aspect = window.innerWidth / window.innerHeight;
+			// this.camera.updateProjectionMatrix();
 
-			this.tempObjects = [];
-			this.particles.stopParticles("Bounding");
+			// this.renderer.setSize( window.innerWidth, window.innerHeight );
+
 		},
 
-		addTempObject: function(room) {
+		zoom: function(increase) {
 
-			this.tempObjects.push(room);
-			this.scene.add(room);
+			var vector = new THREE.Vector3( 0, 0, -1 );
+
+			vector.applyQuaternion( this.camera.quaternion );
+
+			this.camera.position.add( vector.multiplyScalar( increase * 6 ));
+
+			if (this.camera.position.z < 0)
+				this.camera.position.z = 0;
 		},
 
-		addBoundingBox: function(gridSection) {
-
-			gridSection.updateMaterialVector(this.camera.position);
-			this.tempObjects.push(gridSection.model);
-			this.scene.add(gridSection.model);
+		addModel: function(model) {
+			this.scene.add(model);
 		},
 
-		getModel: function(url) {
-
-			for (var i = this.models.length - 1; i >= 0; i--) {
-				if (this.models[i].url == url) {
-
-					var model;
-
-					if (this.models[i].animated) {
-						model = this.models[i].model.createModel();
-					} else {
-						model = this.models[i].model.clone();
-
-						model.traverse(function(thing) {
-							if (thing.material instanceof THREE.MeshLambertMaterial) {
-								//thing.material.map.magFilter = THREE.LinearFilter;
-								//thing.material.map.minFilter = THREE.NearestMipMapLinearFilter;
-								thing.material.map.anisotropy = 16;
-							}
-						});						
-					}
-
-
-					return model;
-				}
-			};
-
-			return null;
+		removeModel: function(model) {
+			this.scene.remove(model);
 		},
 
-		addCamera: function() {
+		render: function() {
 
-			this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 2000 );
-			this.camera.position.set( 0, 0, 175 );
-			this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+			this.particles.render();
+			this.renderer.render( this.scene, this.camera );
+			TWEEN.update();
 		},
 
-		addLights: function() {
-			var hemiLight = new THREE.HemisphereLight(0x404040, 0x404040, .6);
-			hemiLight.position.set( 0, 500, 0 );
-			this.scene.add(hemiLight);
-
-			var ambientLight = new THREE.AmbientLight( 0xffffff );
-			this.scene.add( ambientLight );
-
-			sim.pointLight = new THREE.PointLight( 0xffcc00, 2, 30 );
-			sim.pointLight.position.set( 0, 100, 0 );
-			this.scene.add( sim.pointLight );
-		},
-
-		addRendered: function() {
-			this.renderer = new THREE.WebGLRenderer();
-			this.renderer.setPixelRatio( window.devicePixelRatio );
-			this.renderer.setSize( window.innerWidth, window.innerHeight );
-			this.container.appendChild( this.renderer.domElement );
-		},
-
-		getParent: function(model) {
-
-			if (model.parent.parent != null ) {
-				return this.getParent(model.parent);
-			}
-			return model;
-		},
-
-		setRightMouseButtonDown: function(isDown) {
-			this.mouse.isRightDown = isDown;
+		update: function(dt) {
+			THREE.AnimationHandler.update( dt / 1000 );
 		},
 
 		mouseMove: function(event) {
@@ -271,63 +178,123 @@
 			return position;
 		},
 
-		resize: function() {
-			
-			// this.camera.aspect = window.innerWidth / window.innerHeight;
-			// this.camera.updateProjectionMatrix();
+		getParent: function(model) {
 
-			// this.renderer.setSize( window.innerWidth, window.innerHeight );
-
+			if (model.parent.parent != null ) {
+				return this.getParent(model.parent);
+			}
+			return model;
 		},
 
-		zoom: function(increase) {
+		setRightMouseButtonDown: function(isDown) {
+			this.mouse.isRightDown = isDown;
+		},
+
+		getModel: function(url) {
+
+			for (var i = this.models.length - 1; i >= 0; i--) {
+				if (this.models[i].url == url) {
+
+					var model;
+
+					if (this.models[i].animated) {
+						model = this.models[i].model.createModel();
+					} else {
+						model = this.models[i].model.clone();
+
+						model.traverse(function(thing) {
+							if (thing.material instanceof THREE.MeshLambertMaterial) {
+								//thing.material.map.magFilter = THREE.LinearFilter;
+								//thing.material.map.minFilter = THREE.NearestMipMapLinearFilter;
+								thing.material.map.anisotropy = 16;
+							}
+						});						
+					}
+
+
+					return model;
+				}
+			};
+
+			return null;
+		},
+
+		init: function(urls, callback) {
+
+			this.container = document.getElementById( 'container' );
+			// document.body.appendChild( this.container );
+
+			stats = new Stats();
+			this.container.appendChild( stats.domElement );
+			this.scene = new THREE.Scene();
+			this.projector = new THREE.Projector();
+			this.scene.fog = new THREE.Fog( 0xffffff, 1000, 10000 );
+
+			this.addCamera();
+			this.addLights();
+			this.addRenderer();
+
+			this.addGround();
+
+
+			//this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+            
+			this.numModelsToLoad = urls.dead.length + urls.live.length;
+			for (var i = urls.dead.length - 1; i >= 0; i--) {
+				this.loadModel(urls.dead[i], callback);
+			};
+			for (var i = urls.live.length - 1; i >= 0; i--) {
+				this.loadAnimated(urls.live[i], callback);
+			};
+			//callback();
+			this.particles.init(this.scene);
+
+
 
 			var vector = new THREE.Vector3( 0, 0, -1 );
-
 			vector.applyQuaternion( this.camera.quaternion );
-
-			this.camera.position.add( vector.multiplyScalar( increase * 6 ));
-
-			if (this.camera.position.z < 0)
-				this.camera.position.z = 0;
+			this.camera.position.add( vector.multiplyScalar( -30 ));
 		},
 
-		moveCamera: function(direction) {
-			switch (direction) {
-				case "up":
-					this.camera.position.y += 1;
-					break
-				case "down":
-					this.camera.position.y -= 1;
-					break
-				case "left":
-					this.camera.position.x -= 1;
-					break
-				case "right":
-					this.camera.position.x += 1;
-					break
-			}
+
+/************************************************************************* CUSTOM **********************************************************************/
+
+
+		addGround: function() {
+
+			var floorTexture = new THREE.ImageUtils.loadTexture( 'res/textures/swamp.jpg' );
+			floorTexture.anisotropy = 16;
+			floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+			floorTexture.repeat.set( 10, 10 );
+			var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+			var floorGeometry = new THREE.PlaneGeometry(200, 200, 10, 10);
+			var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+			// floor.position.set(0, 0, 0);
+			//floor.rotation.x = Math.PI / 2;
+			this.scene.add(floor);
 		},
 
-		addModel: function(model) {
-			this.scene.add(model);
+		removeDraggingObjects: function() {
+			for (var i = this.tempObjects.length - 1; i >= 0; i--) {
+				this.scene.remove(this.tempObjects[i]);
+			};
+
+			this.tempObjects = [];
+			this.particles.stopParticles("Bounding");
 		},
 
-		removeModel: function(model) {
-			this.scene.remove(model);
+		addTempObject: function(room) {
+
+			this.tempObjects.push(room);
+			this.scene.add(room);
 		},
 
-		render: function() {
+		addBoundingBox: function(gridSection) {
 
-			this.particles.render();
-			this.renderer.render( this.scene, this.camera );
-			TWEEN.update();
+			gridSection.updateMaterialVector(this.camera.position);
+			this.tempObjects.push(gridSection.model);
+			this.scene.add(gridSection.model);
 		},
-
-		update: function(dt) {
-			THREE.AnimationHandler.update( dt / 1000 );
-		},
-
 	});
 
 	SIM.GraphicsEngine = GraphicsEngine;

@@ -1,0 +1,212 @@
+p{margin:0; padding:0}
+
+body {
+	background-repeat: no-repeat;
+	width:1000px;
+}
+
+#jeremy {
+	width: 640px;
+	height: 640px;
+}
+
+.action {
+	float: left;
+}
+
+#actions {
+	margin-top: 200px;
+	margin-left: 500px;
+}
+
+#map {
+	width: 352px;
+	height: 352px;
+}
+
+#monsters {
+	margin-top: 500px;
+	margin-left: 500px;
+}
+
+.monster {
+	float: left;
+	margin-right: 50px;
+	height: 89px;
+	width: 124px;
+}
+
+.tile {
+	float: left;
+	height: 32px;
+	width: 32px;
+	background-repeat: no-repeat;
+}
+
+#wordDiv {
+	/*position: absolute;*/
+	font-family: 'Rufina', serif;
+	font-size: 16px;
+	/*top: 300px;*/
+	/*left: 400px;*/
+}
+
+#wordScoreDiv {
+	position: absolute;
+	top: 450px;
+	left: 450px;
+}
+
+#HUD 
+{
+	display: inline-block;
+	position: relative;
+	font-family: 'Rufina', serif;
+	float: right;
+}
+
+#nextWord
+{
+	font-size: 32px;
+}
+
+.stats
+{
+	font-size: 16px;
+}
+
+#letterScores
+{
+	display: inline-block;
+	position: relative;
+	float: left;
+}
+
+/* Mask for background, by default is not display */
+#mask {
+	display: none;
+	background: #000; 
+	position: fixed; left: 0; top: 0; 
+	z-index: 10;
+	width: 100%; height: 100%;
+	opacity: 0.5;
+	z-index: 999;
+}
+
+/* You can customize to your needs  */
+.keyboard-popup{
+	display:none;
+	background: #EEE;
+	padding: 20px 30px 10px 30px; 	
+	border: 1px solid black;
+	float: left;
+	font-size: 1.2em;
+	position: fixed;
+	top: 50%; left: 50%;
+	z-index: 99999;
+	border-radius:5px 5px 5px 5px;
+        -moz-border-radius: 5px; /* Firefox */
+        -webkit-border-radius: 5px; /* Safari, Chrome */
+}
+
+
+
+#tabs {
+	width:600px;
+	height: 500px;
+	float: left;
+	margin-right: 20px;
+}
+
+#minimap {
+	float: left;
+	width: 200px;
+	height: 200px;
+	border-style: solid;
+	border-width: 3px;
+	border-color: gray;
+	margin-bottom: 20px;
+}
+
+#objects {
+	float: left;
+	width: 200px;
+	height: 300px;
+	border-style:solid;
+	border-width:3px;
+	border-color: gray;
+}
+
+#menu {
+	width:800px;
+	height:35px;
+	border-style:solid;
+	border-width:3px;
+	border-color: gray;
+}
+
+.ui-tabs {
+	position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+	padding: 0em;
+}
+.ui-tabs .ui-tabs-nav {
+	margin: 0;
+	padding: 0em .2em 0;
+}
+.ui-tabs .ui-tabs-nav li {
+	list-style: none;
+	float: left;
+	position: relative;
+	top: 0;
+	margin: 1px .2em 0 0;
+	border-bottom-width: 0;
+	padding: 0;
+	white-space: nowrap;
+	font-size: small;
+}
+.ui-tabs .ui-tabs-nav li a {
+	float: left;
+	padding: .3em 1em;
+	text-decoration: none;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-active {
+	margin-bottom: -1px;
+	padding-bottom: 1px;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.ui-tabs .ui-tabs-nav li.ui-state-disabled a,
+.ui-tabs .ui-tabs-nav li.ui-tabs-loading a {
+	cursor: text;
+}
+.ui-tabs .ui-tabs-nav li a, /* first selector in group seems obsolete, but required to overcome bug in Opera applying cursor: text overall if defined elsewhere... */
+.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-active a {
+	cursor: pointer;
+}
+.ui-tabs .ui-tabs-panel {
+	display: block;
+	border-width: 0;
+	padding: 1em 1.4em;
+	background: none;
+	font-size:small;
+}
+
+#typingArea {
+	float:left;
+	width: 500px;
+	height: 600px;
+}
+
+#commands {
+	float:left;
+}
+
+.command {
+	width: 100px;
+	float:left;
+	border: 1px solid black;
+}
+
+#container {
+	width: 500px;
+	float:right;
+}

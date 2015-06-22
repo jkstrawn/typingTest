@@ -187,6 +187,24 @@
 			this.draggingShape = null;
 		},
 
+		doCommand: function(name) {
+
+			switch (name) {
+
+				case "forwardColumn":
+					this.player.moveForward();
+					break;
+				case "leftColumn":
+					this.player.turnLeft();
+					break;
+				case "rightColumn":
+					this.player.turnRight();
+					break;
+				case "fireColumn":
+					this.player.shootTongue();
+			}
+		},
+
 		addShape: function(shape) {
 
 			this.graphics.addModel(shape.model);
@@ -217,30 +235,6 @@
 			};
 
 			console.log("ERROR: tried to delete non-existant shape", shape);
-		},
-
-		placeRoomOnHoverLocation: function() {
-
-			var cost = 0;
-			var rooms = this.rooms.getRoomsToPlace(this.hoveredShape, this.draggingShape.type.name);
-			var roomChanges = this.rooms.getRoomsToChange(this.hoveredShape, this.draggingShape.type.name);
-
-			for (var i = rooms.length - 1; i >= 0; i--) {
-				this.grid.setRoom(rooms[i].grid, rooms[i].room);
-				this.addShape(rooms[i].room);
-				cost += rooms[i].room.type.cost;
-			};
-			for (var i = roomChanges.length - 1; i >= 0; i--) {
-				roomChanges[i].room.model = roomChanges[i].model;
-				this.graphics.removeModel(roomChanges[i].model);
-				this.graphics.addModel(roomChanges[i].model);
-			};
-
-			this.resources.changeValue("Stone", cost * -1);
-			this.clearDragging();
-			this.rooms.clearTempRoom();
-			this.rooms.clearRoomGridNames();
-			this.grid.updateRoomPoints();
 		},
 
 		createAsteroid: function(mobData) {
