@@ -1,9 +1,10 @@
 {
   "name": "typingTest",
   "version": "1.0.0",
-  "description": "Typing test - frog/fly version",
+  "description": "who cares",
   "main": "server.js",
   "dependencies": {
+    "express": "^4.12.4",
     "node-gameloop": "^0.1.0",
     "socket.io": "^1.3.2",
     "three-math": "^0.69.0"
@@ -17,15 +18,7 @@
     "type": "git",
     "url": "https://github.com/jkstrawn/typingTest"
   },
-  "keywords": [
-    "typing",
-    "frog",
-    "test",
-    "practice",
-    "game",
-    "fun"
-  ],
-  "author": "Jeremy Strawn",
+  "author": "Jeremy STrawn",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jkstrawn/typingTest/issues"

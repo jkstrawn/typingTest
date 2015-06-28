@@ -1,3 +1,11 @@
+function LetterRank (score, finger, row) {
+	this.score = score;
+	this.finger = finger;
+	this.row = row;
+
+	this.digraph = [];
+}
+
 var keyboardList = [];
 keyboardList[0] = new LetterRank(1.9, 1, 1);	// q
 keyboardList[1] = new LetterRank(1.4, 2, 1);	// w 
