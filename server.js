@@ -20,12 +20,6 @@ io.on('connection', function(socket) {
 	players.push({id: id, position: socket});
 
 	socket.emit("connected", id);
-	
-	var mobsToSend = minifyList(mobs);
-	socket.emit("mobs", mobsToSend);
-
-	var otherPlayers = getOtherPlayers(id);
-	socket.emit("players", mobsToSend);
 
 	console.log('a user connected');
 
@@ -51,13 +45,6 @@ var init = function() {
 	}
 };
 
-var minifyList = function(list) {
-	var toSend = [];
-	for (var i = list.length - 1; i >= 0; i--) {
-		toSend.push(list[i].getMin());
-	};
-	return toSend;
-};
 
 var getOtherPlayers = function(id) {
 	var others = [];
@@ -88,17 +75,7 @@ var id = gameloop.setGameLoop(function(delta) {
 		mobs[i].update(delta);
 	};
 
-
-	var mobsToSend = minifyList(mobs);
-	io.emit("mobs", mobsToSend);
 }, 1000 / 30);
- 
-// // stop the loop 2 seconds later 
-// setTimeout(function() {
-//     console.log('2000ms passed, stopping the game loop');
-//     gameloop.clearGameLoop(id);
-// }, 2000);
-
 
 
 
@@ -107,57 +84,11 @@ var id = gameloop.setGameLoop(function(delta) {
 
 
 var Meteor = my.Class({
-	constructor: function(id, size, position, speed) {
-		this.id = id;
-		this.size = size;
-		this.position = position;
-		this.speed = speed || 15;
-		this.direction = 0;
-		this.velocity = null;
+	constructor: function(id) {
 
-		this.changeDirection();
 	},
 
 	update: function(dt) {
-
-		var dx = this.velocity.x * dt * this.speed;
-		var dy = this.velocity.y * dt * this.speed;
-
-		this.position.add(new THREE.Vector3(dx, dy, 0));
-
-		if (this.position.x > 100)
-			this.position.x = -100;
-		
-		if (this.position.x < -100)
-			this.position.x = 100;
-		
-		if (this.position.y > 100)
-			this.position.y = -100;
-		
-		if (this.position.y < -100)
-			this.position.y = 100;
-
-		// console.log("moved to " + this.position.x + " and " + this.position.y);
-		if (Math.random() > .9) {
-			this.changeDirection();
-		}
-	},
-
-	changeDirection: function() {
-		var directionChange = Math.random() * 1.5 - .75;
-		this.direction += directionChange;
-		this.velocity = {
-			x: Math.cos(this.direction), 
-			y: Math.sin(this.direction)
-		};
-	},
-
-	breakApart: function() {
-
-	},
-
-	getMin: function() {
-		return {id: this.id, size: this.size, pos: {x: this.position.x, y: this.position.y}, rot: this.direction};
 	},
 
 });
