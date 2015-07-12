@@ -7,10 +7,9 @@
 			this.models = [];
 			this.numModelsToLoad = 0;
 			this.loader = new PIXI.loaders.Loader();
-			this.stage = null;
-			this.graphics = new PIXI.Graphics();
 			this.stage = new PIXI.Stage(0xFFFFFF);
 			this.renderer = PIXI.autoDetectRenderer(800, 800, null, true);
+			this.groundOutlineGraphics = new PIXI.Graphics();
 
 			this.playerContainer = null;
 			this.staminaBar = null;
@@ -54,7 +53,7 @@
 		},
 
 		removeModel: function(model) {
-			this.scene.remove(model);
+			this.stage.removeChild(model);
 		},
 
 		render: function() {
@@ -98,9 +97,8 @@
 
 			this.renderer.backgroundColor = 0xFFFFFF;
 			console.log(this.renderer);
-			this.graphics.lineStyle(1, 0xFF0000);
 
-			this.stage.addChild(this.graphics);
+			this.stage.addChild(this.groundOutlineGraphics);
 
 			PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST;
 
@@ -116,8 +114,6 @@
 			// 	this.loadModel(urls.dead[i], callback);
 			// };
 
-			this.drawStaminaBar();
-
 			document.body.appendChild(this.renderer.view);
 
 			this.playerContainer = new PIXI.DisplayObjectContainer();
@@ -128,12 +124,17 @@
 			this.stage.addChild(this.playerContainer);
 
 			this.loader
-			    .add("traductus", "SpriteSheet.json", null)
-			    .add("icons", "abilitySprites.json", null)
+			    .add("traductus", "sprites_traductus.json", null)
+			    .add("daedolon", "sprites_daedolon.json", null)
+			    .add("icons", "sprites_abilities.json", null)
 			    .add("tile.png", null)
 			    .on("complete", callback)
 			    .load($.proxy( this.loadedSprites, this ));
 
+		},
+
+		removeSprite: function(sprite) {
+			this.playerContainer.removeChild(sprite);
 		},
 
 		getSprite: function(name) {
@@ -149,28 +150,18 @@
 
 		loadedSprites: function(loader, resources) {
 
-			var texture = PIXI.TextureCache["tile.png"];
-			var squares = type.grid.getSquares();
+			this.addGround();
+			this.addAbilitySprites();
 
-			for (var i = squares.length - 1; i >= 0; i--) {
-				var square = squares[i];
-				var sprite = new PIXI.Sprite(texture);
-				sprite.position.x = square.x;
-				sprite.position.y = square.y;
-				sprite.scale.set(2);
-				this.stage.addChildAt(sprite, 0);
-			};
-
-			for (var i = squares.length - 1; i >= 0; i--) {
-				this.graphics.drawRect(squares[i].x, squares[i].y, squares[i].size, squares[i].size);
-			};
-
-			this.setAbilitySprites();
 			// start animating
 			window.requestAnimationFrame( animate );
 		},
 
-		setAbilitySprites: function() {
+
+/************************************************************************* CUSTOM **********************************************************************/
+
+
+		addAbilitySprites: function() {
 
 			var sprite = PIXI.Sprite.fromFrame("charge");
 			sprite.position.x = 100;
@@ -197,24 +188,55 @@
 			this.playerContainer.addChild(sprite);
 		},
 
-
-/************************************************************************* CUSTOM **********************************************************************/
-
 		addGround: function() {
 
-			// var floorTexture = new THREE.ImageUtils.loadTexture( 'res/textures/swamp.jpg' );
-			// floorTexture.anisotropy = 16;
-			// floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
-			// floorTexture.repeat.set( 2, 2 );
-			// var floorMaterial = new THREE.MeshLambertMaterial( { map: floorTexture, side: THREE.DoubleSide } );
-			// var floorGeometry = new THREE.PlaneGeometry(200, 200, 2, 2);
-			// var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-			// // floor.position.set(0, 0, 0);
-			// //floor.rotation.x = Math.PI / 2;
-			// this.scene.add(floor);
+
+			var texture = PIXI.TextureCache["tile.png"];
+			var tiles = type.grid.getTiles();
+
+			for (var i = tiles.length - 1; i >= 0; i--) {
+				var tile = tiles[i];
+				var sprite = new PIXI.Sprite(texture);
+				sprite.position.x = tile.x;
+				sprite.position.y = tile.y;
+				sprite.scale.set(2);
+				this.stage.addChildAt(sprite, 0);
+			};
+
+			this.groundOutlineGraphics.lineStyle(1, 0x000000);
+			for (var i = tiles.length - 1; i >= 0; i--) {
+				this.groundOutlineGraphics.drawRect(tiles[i].x, tiles[i].y, tiles[i].size, tiles[i].size);
+			};
 		},
 
-		drawStaminaBar: function() {
+		newGraphics: function() {
+			var graphics = new PIXI.Graphics();
+
+			this.stage.addChild(graphics);
+
+			return graphics;
+		},
+
+		clearGraphics: function(graphics) {
+			graphics.clear();
+			this.stage.removeChild(graphics);
+		},
+
+		drawHealthBar: function(graphics, healthPercent, position) {
+			graphics.clear();
+			console.log("draw health at " + healthPercent);
+
+			graphics.fillColor = null;
+			// console.log(graphics.fillAlpha);
+			// console.log(graphics.fillColor);
+			// console.log(graphics.filling);
+			graphics.lineStyle(1, 0xDD0000);
+			graphics.drawRect(position.x + 15.5, position.y + 130.5, 50, 10);
+
+
+			graphics.beginFill(0xDD0000);
+			graphics.drawRect(position.x + 15.5, position.y + 130.5, healthPercent * 50, 10);
+
 			// var geometry = new THREE.PlaneGeometry( 5 , 10 );
 			// var material = new THREE.MeshBasicMaterial( {color: 0x22aa22, side: THREE.DoubleSide} );
 			// this.staminaBar = new THREE.Mesh( geometry, material );

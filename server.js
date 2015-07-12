@@ -13,13 +13,17 @@ var port = process.env.PORT || 8000;
 app.use(express.static(__dirname + '/public'));
 
 var players = [];
-var mobs = [];
+var npcs = [];
+var grid = null;
+var nextId = 1;
 
 io.on('connection', function(socket) {
-	var id = players.length;
+	var id = nextId++;
 	players.push({id: id, position: socket});
 
 	socket.emit("connected", id);
+
+	socket.emit("npcs", getNpcs());
 
 	console.log('a user connected');
 
@@ -31,6 +35,10 @@ io.on('connection', function(socket) {
 	socket.on("killBug", function(msg) {
 		removeFromList(mobs, msg.id);
 	});
+
+	socket.on("attack", function(tile) {
+		playerAttackTile(id, tile);
+	});
 });
 
 http.listen(port, function() {
@@ -38,11 +46,22 @@ http.listen(port, function() {
 });
 
 var init = function() {
-	for (var i = 0; i < 10; i++) {
-		var position = new THREE.Vector3(Math.random() * 100 - 50, Math.random() * 200 - 100, 0);
-		var meteor = new Meteor(100 + i, 8, position);
-		mobs.push(meteor);
-	}
+	grid = new GRID(4, 4);
+
+	var tile = grid.getTile(3, 0);
+	var npc = new NPC(nextId++, 3, 0, tile);
+
+	grid.setNpc(npc, 3, 0);
+
+	npcs.push(npc);
+};
+
+var getNpcs = function() {
+	var npcsToSend = [];
+	for (var i = npcs.length - 1; i >= 0; i--) {
+		npcsToSend.push(npcs[i].minify());
+	};
+	return npcsToSend;
 };
 
 
@@ -65,15 +84,47 @@ var removeFromList = function(list, id) {
 	};
 };
 
+var playerAttackTile = function(id, tile) {
+	var tile = grid.getTile(tile.x, tile.y);
+	var npc = tile.npc;
+	if (npc) {
+		console.log(id + " hit npc " + npc.id + "!");
+		npc.health -= 2;
+		if (npc.health <= 0) {
+			killNpc(npc);
+		} else {
+			io.emit("npcs", [npc.minify()]);
+		}
+	} else {
+		console.log("missed at " + tile.x + "," + tile.y + "!");
+	}
+};
+
+var killNpc = function(npc) {
+	io.emit("killNpc", {id: npc.id});
+	grid.removeNpc(npc.position.x, npc.position.y);
+	removeFromList(npcs, npc.id);
+
+	var x = Math.floor(Math.random() * 4);
+	var y = Math.floor(Math.random() * 4);
+
+	var newNpc = new NPC(nextId++, x, y);
+
+	grid.setNpc(newNpc, x, y);
+	npcs.push(newNpc);
+	io.emit("npcs", [newNpc.minify()]);
+	console.log(npcs);
+};
+
  
 // start the loop at 30 fps (1000/30ms per frame) and grab its id 
 var frameCount = 0;
 var id = gameloop.setGameLoop(function(delta) {
 	frameCount++;
 
-	for (var i = mobs.length - 1; i >= 0; i--) {
-		mobs[i].update(delta);
-	};
+	// for (var i = mobs.length - 1; i >= 0; i--) {
+	// 	mobs[i].update(delta);
+	// };
 
 }, 1000 / 30);
 
@@ -83,12 +134,57 @@ var id = gameloop.setGameLoop(function(delta) {
 
 
 
-var Meteor = my.Class({
-	constructor: function(id) {
-
+var NPC = my.Class({
+	constructor: function(id, x, y, tile) {
+		this.id = id;
+		this.position = {x: x, y: y};
+		this.sprite = "da_downStand";
+		// this.tileX = tile.gridX;
+		// this.tileY = tile.gridY;
+		this.health = 10;
 	},
 
 	update: function(dt) {
+
+	},
+
+	minify: function() {
+		return {
+			id: this.id, 
+			pos: {x: this.position.x, y: this.position.y}, 
+			sprite: this.sprite, 
+			health: this.health
+		};
+	},
+
+});
+
+var GRID = my.Class({
+	constructor: function(width, height) {
+		this.tiles = [];
+
+		for (var x = 0; x < width; x++) {
+			var row = [];
+			this.tiles.push(row);
+			for (var y = 0; y < height; y++) {
+				var tile = {x: x, y: y};
+				this.tiles[x].push(tile);
+			}
+		}
+	},
+
+	setNpc: function(npc, x, y) {
+		var tile = this.getTile(x, y);
+		tile.npc = npc;
+	},
+
+	getTile: function(x, y) {
+		return this.tiles[x][y];
+	},
+
+	removeNpc: function(x, y) {
+		var tile = this.getTile(x, y);
+		tile.npc = null;
 	},
 
 });

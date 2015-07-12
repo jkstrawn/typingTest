@@ -69,6 +69,8 @@
 	<script src="player.js"></script>
 	<script src="network.js"></script>
 	<script src="grid.js"></script>
+	<script src="astar.js"></script>
+	<script src="tween.js"></script>
 
 
 	<script src="typing/UserSession.js"></script>
@@ -83,7 +85,6 @@
 
 		window.onload = function() {
 			type.init();
-			animate();
 		}
 
 
@@ -94,7 +95,7 @@
 			oldTime = time;
 
 			type.render();
-			type.update(dt);
+			type.update(dt, time);
 		}
 	</script>
 

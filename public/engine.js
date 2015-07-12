@@ -26,33 +26,47 @@
 
 		loadedModels: function() {
 
-			this.player.init(this.grid.getSquare(0, 0));
+			this.player.init(this.grid.getTile(0, 0));
+			this.network.init();
+			animate();
 		},
 
 		// EVENTS
 
-		updatePlayer: function(dataModel) {
+		updateNpc: function(dataModel) {
 			if (dataModel.id == this.player.id) return;
 
 			var player = null;
-			for (var i = this.otherPlayers.length - 1; i >= 0; i--) {
-				if (this.otherPlayers[i].id == dataModel.id) {
-					player = this.otherPlayers[i];
+			for (var i = this.shapes.length - 1; i >= 0; i--) {
+				if (this.shapes[i].id == dataModel.id) {
+					player = this.shapes[i];
 				}
 			};
 
 			if (player == null) {
-				//var newPlayerModel = this.graphics.createPlayer();
+				console.log("add new npc with id " + dataModel.id);
+				var gridTile = this.grid.getTile(dataModel.pos.x, dataModel.pos.y);
 
-				var newPlayerModel = this.graphics.getModel(this.modelUrls.live[0]);
-				this.graphics.scene.add(newPlayerModel);
-				newPlayerModel.play("walk", 1, 2);
-				player = {id: dataModel.id, model: newPlayerModel};
-				this.otherPlayers.push(player);
+				npc = new TYPE.Npc(dataModel.id, gridTile, dataModel.sprite, dataModel.health);
+				this.player.targetNpc = npc;
+
+				this.shapes.push(npc);
+			} else {
+				console.log("update npc " + dataModel.id);
+				player.updateInfo(dataModel);
 			}
 
 			//console.log(player);
-			this.graphics.movePlayer(player, dataModel);
+		},
+
+		killNpc: function(npc) {
+			for (var i = this.shapes.length - 1; i >= 0; i--) {
+				if (this.shapes[i].id == npc.id) {
+					player = this.shapes[i];
+					player.die();
+					this.removeShape(player);
+				}
+			};
 		},
 
 		// PROCESS EVENTS
@@ -99,41 +113,12 @@
 			for (var i = this.shapes.length - 1; i >= 0; i--) {
 				if (this.shapes[i] == shape) {
 					this.shapes.splice(i, 1);
-					this.graphics.removeModel(shape.model);
+					this.graphics.removeSprite(shape.sprite);
 					return;
 				}
 			};
 
 			console.log("ERROR: tried to delete non-existant shape", shape);
-		},
-
-		createAsteroid: function(mobData) {
-			// console.log("creating asteroid with id of " + mobData.id);
-			var model = this.graphics.getModel(this.modelUrls.dead[1]);
-			model.scale.set(mobData.size / 4, mobData.size / 4, mobData.size / 4);
-			model.position.set(mobData.pos.x, mobData.pos.y, 0);
-			this.graphics.addModel(model);
-			var shape = new TYPE.Bug(mobData.id, model, mobData.size);
-			this.shapes.push(shape);
-		},
-
-		updateAsteroid: function(mobData) {
-			if (this.bugIsKilled(mobData.id))
-				return;
-			var asteroid = this.getShapeWithId(mobData.id);
-			if (asteroid) {
-				asteroid.updatePosition(mobData.pos, mobData.rot);
-			} else {
-				this.createAsteroid(mobData);
-			}
-		},
-
-		bugIsKilled: function (id) {
-			for (var i = this.killedBugs.length - 1; i >= 0; i--) {
-				if (this.killedBugs[i] == id)
-					return true;
-			};
-			return false;
 		},
 
 		getShapeWithId: function(id) {
@@ -146,6 +131,7 @@
 		},
 
 		// OTHER
+
 
 		getShapes: function() {
 
@@ -226,7 +212,8 @@
 			this.graphics.render();
 		},
 
-		update: function(dt) {
+		update: function(dt, time) {
+
 
 			for (var i = this.shapes.length - 1; i >= 0; i--) {
 				this.shapes[i].update(dt);
@@ -251,6 +238,7 @@
 			// this.events.update(dt);
 
 			// this.checkCollisions();
+			TWEEN.update(time);
 		},
 
 		onWindowResize: function() {

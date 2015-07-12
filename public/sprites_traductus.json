@@ -1,0 +1,84 @@
+{"frames": {
+
+"tr_downStand":
+{
+	"frame": {"x":13,"y":148,"w":43,"h":66},
+	"spriteSourceSize": {"x":0,"y":0,"w":43,"h":66},
+	"sourceSize": {"w":43,"h":66}
+},
+"tr_leftStand":
+{
+	"frame": {"x":249,"y":149,"w":59,"h":64},
+	"spriteSourceSize": {"x":0,"y":0,"w":59,"h":64},
+	"sourceSize": {"w":59,"h":64}
+},
+"tr_upStand":
+{
+	"frame": {"x":500,"y":148,"w":44,"h":66},
+	"spriteSourceSize": {"x":0,"y":0,"w":44,"h":66},
+	"sourceSize": {"w":44,"h":66}
+},
+"tr_rightStand":
+{
+	"frame": {"x":735,"y":149,"w":62,"h":65},
+	"spriteSourceSize": {"x":0,"y":0,"w":62,"h":65},
+	"sourceSize": {"w":62,"h":65}
+},
+"tr_downPrepare":
+{
+	"frame": {"x":9,"y":292,"w":51,"h":66},
+	"spriteSourceSize": {"x":0,"y":0,"w":51,"h":66},
+	"sourceSize": {"w":51,"h":66}
+},
+"tr_leftPrepare":
+{
+	"frame": {"x":250,"y":292,"w":57,"h":66},
+	"spriteSourceSize": {"x":0,"y":0,"w":57,"h":66},
+	"sourceSize": {"w":57,"h":66}
+},
+"tr_upPrepare":
+{
+	"frame": {"x":496,"y":292,"w":52,"h":68},
+	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":68},
+	"sourceSize": {"w":52,"h":68}
+},
+"tr_rightPrepare":
+{
+	"frame": {"x":733,"y":293,"w":62,"h":68},
+	"spriteSourceSize": {"x":0,"y":0,"w":62,"h":68},
+	"sourceSize": {"w":62,"h":68}
+},
+"tr_downAttack":
+{
+	"frame": {"x":11,"y":438,"w":50,"h":62},
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":62},
+	"sourceSize": {"w":50,"h":62}
+},
+"tr_leftAttack":
+{
+	"frame": {"x":239,"y":440,"w":66,"h":61},
+	"spriteSourceSize": {"x":0,"y":0,"w":66,"h":61},
+	"sourceSize": {"w":66,"h":61}
+},
+"tr_upAttack":
+{
+	"frame": {"x":490,"y":441,"w":52,"h":59},
+	"spriteSourceSize": {"x":0,"y":0,"w":52,"h":59},
+	"sourceSize": {"w":52,"h":59}
+},
+"tr_rightAttack":
+{
+	"frame": {"x":726,"y":440,"w":68,"h":61},
+	"spriteSourceSize": {"x":0,"y":0,"w":68,"h":61},
+	"sourceSize": {"w":68,"h":61}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "traductus.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":512},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:9e3e5afd01ea8e418afabfbdcd724485$"
+}
+}

@@ -3,6 +3,10 @@
 	var Network = my.Class({
 
 		constructor: function() {
+			this.socket = null;
+		},
+
+		init: function() {
 			this.socket = io();
 			this.socket.on('moved', function(msg) {
 				type.updatePlayer(msg);
@@ -14,16 +18,25 @@
 				console.log("ID: " + msg);
 			});
 
-			this.socket.on('mobs', function(mobList) {
-				for (var i = mobList.length - 1; i >= 0; i--) {
-					type.updateAsteroid(mobList[i]);
+			this.socket.on('npcs', function(npcs) {
+				for (var i = npcs.length - 1; i >= 0; i--) {
+					console.log(npcs[i]);
+					type.updateNpc(npcs[i]);
 				};
+			});
+
+			this.socket.on('killNpc', function(npc) {
+				type.killNpc(npc);
 			});
 		},
 
 		sendPlayerLocation: function(position) {
 			console.log(this.socket);
 			this.socket.emit('move', { position: position });
+		},
+
+		sendAttack: function(tile) {
+			this.socket.emit('attack', tile);
 		},
 
 		killBug: function(id) {
