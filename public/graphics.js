@@ -7,6 +7,7 @@
 			this.models = [];
 			this.numModelsToLoad = 0;
 			this.loader = new PIXI.loaders.Loader();
+			console.log(this.loader.add);
 			this.stage = new PIXI.Stage(0xFFFFFF);
 			this.renderer = PIXI.autoDetectRenderer(800, 800, null, true);
 			this.groundOutlineGraphics = new PIXI.Graphics();
@@ -100,7 +101,7 @@
 
 			this.stage.addChild(this.groundOutlineGraphics);
 
-			PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST;
+			PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
 
 			// for (bar in this.loader)
 			// {
@@ -116,7 +117,7 @@
 
 			document.body.appendChild(this.renderer.view);
 
-			this.playerContainer = new PIXI.DisplayObjectContainer();
+			this.playerContainer = new PIXI.Container();
 			// this.playerContainer.scale.set(2);
 
 // this.playerContainer.scale.x = this.playerContainer.scale.y = 2;
@@ -127,7 +128,8 @@
 			    .add("traductus", "sprites_traductus.json", null)
 			    .add("daedolon", "sprites_daedolon.json", null)
 			    .add("icons", "sprites_abilities.json", null)
-			    .add("tile.png", null)
+			    .add("fireball", "sprites_fireball.json", null, $.proxy(this.loadAnimated, this))
+			    .add("grass.png", null)
 			    .on("complete", callback)
 			    .load($.proxy( this.loadedSprites, this ));
 
@@ -152,6 +154,7 @@
 
 			this.addGround();
 			this.addAbilitySprites();
+			// this.loadFireBall();
 
 			// start animating
 			window.requestAnimationFrame( animate );
@@ -191,7 +194,7 @@
 		addGround: function() {
 
 
-			var texture = PIXI.TextureCache["tile.png"];
+			var texture = PIXI.utils.TextureCache["grass.png"];
 			var tiles = type.grid.getTiles();
 
 			for (var i = tiles.length - 1; i >= 0; i--) {
@@ -207,6 +210,41 @@
 			for (var i = tiles.length - 1; i >= 0; i--) {
 				this.groundOutlineGraphics.drawRect(tiles[i].x, tiles[i].y, tiles[i].size, tiles[i].size);
 			};
+		},
+
+		loadAnimated: function(resource) {
+			console.log(resource);
+
+			var sprite = PIXI.Sprite.fromFrame("fireball_anim_1");
+			console.log(sprite);
+			var explosionTextures = [];
+			
+			for (var i=0; i < 5; i++) 
+			{
+			 	var texture = PIXI.Texture.fromFrame("fireball_anim_" + (i+1));
+			 	explosionTextures.push(texture);
+			};
+			
+			// create a texture from an image path
+			// add a bunch of aliens
+				// create an explosion MovieClip
+				var explosion = new PIXI.MovieClip(explosionTextures);
+				
+			
+				explosion.position.x = 200
+				explosion.position.y = 200;
+				explosion.animationSpeed = .15;
+				
+				// explosion.rotation = Math.random() * Math.PI;
+				explosion.scale.x = 2;
+				explosion.scale.y = 2;
+				
+				explosion.gotoAndPlay(0);
+				
+				this.stage.addChild(explosion);
+			
+			// // start animating
+			// requestAnimFrame( animate );
 		},
 
 		newGraphics: function() {

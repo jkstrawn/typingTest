@@ -13,9 +13,9 @@
 			});
 
 			this.socket.on('connected', function(msg) {
-				type.player.setId(msg);
+				type.loadPlayer(msg.id, msg.position.x, msg.position.y);
 				console.log("should have refreshed");
-				console.log("ID: " + msg);
+				console.log("ID: " + msg.id);
 			});
 
 			this.socket.on('npcs', function(npcs) {
@@ -28,6 +28,14 @@
 			this.socket.on('killNpc', function(npc) {
 				type.killNpc(npc);
 			});
+		},
+
+		changeTile: function(x, y) {
+			this.socket.emit("tile", {x: x, y: y});
+		},
+
+		move: function(x, y) {
+
 		},
 
 		sendPlayerLocation: function(position) {

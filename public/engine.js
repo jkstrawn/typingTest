@@ -13,22 +13,27 @@
 
 			this.oldTime = 0;
 			this.graphics = new TYPE.GraphicsEngine();
-			this.player = new TYPE.Player();
+			this.player = null;
 			this.network = new TYPE.Network();
 			this.grid = new TYPE.Grid();
 		},
 
 		init: function() {
 
+			//gridPosX, gridPosY, width, height, size
 			this.grid.init(100, 5, 4, 4, 128);
 			this.graphics.init(this.modelUrls, $.proxy( this.loadedModels, this ), this.grid);
 		},
 
 		loadedModels: function() {
-
-			this.player.init(this.grid.getTile(0, 0));
 			this.network.init();
 			animate();
+		},
+
+		loadPlayer: function(id, x, y) {
+			this.player = new TYPE.Player();
+			this.player.setId(id);
+			this.player.init(this.grid.getTile(x, y));
 		},
 
 		// EVENTS
@@ -230,7 +235,8 @@
 			this.graphics.update(dt);
 
 			// this.player.sendKeys(this.keys);
-			this.player.update(dt);
+			if (this.player)
+				this.player.update(dt);
 			//this.controls.update();
 
 			// this.audio.update(dt, this.graphics.camera);

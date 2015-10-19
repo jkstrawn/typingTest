@@ -14,15 +14,19 @@ app.use(express.static(__dirname + '/public'));
 
 var players = [];
 var npcs = [];
+var projectiles = [];
 var grid = null;
 var nextId = 1;
 
 io.on('connection', function(socket) {
 	var id = nextId++;
-	players.push({id: id, position: socket});
+	var tile = grid.getTile(0, 1);
+	var player = new PLAYER(id, socket, tile);
+	tile.player = player;
 
-	socket.emit("connected", id);
+	players.push(player);
 
+	socket.emit("connected", {id: id, position: {x: tile.x, y: tile.y}});
 	socket.emit("npcs", getNpcs());
 
 	console.log('a user connected');
@@ -32,8 +36,8 @@ io.on('connection', function(socket) {
 		//io.emit('moved', msg);
 	});
 
-	socket.on("killBug", function(msg) {
-		removeFromList(mobs, msg.id);
+	socket.on("tile", function(msg) {
+		changePlayerTile(player, msg.x, msg.y);
 	});
 
 	socket.on("attack", function(tile) {
@@ -43,17 +47,58 @@ io.on('connection', function(socket) {
 
 http.listen(port, function() {
 	console.log('listening on *:' + port);
+
+	init();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var init = function() {
 	grid = new GRID(4, 4);
 
 	var tile = grid.getTile(3, 0);
 	var npc = new NPC(nextId++, 3, 0, tile);
-
-	grid.setNpc(npc, 3, 0);
+	tile.player = npc;
 
 	npcs.push(npc);
+
+	startGame();
+};
+
+var startGame = function() {
+
+	// start the loop at 30 fps (1000/30ms per frame) and grab its id 
+	var frameCount = 0;
+	var id = gameloop.setGameLoop(function(delta) {
+		frameCount++;
+
+		for (var i = npcs.length - 1; i >= 0; i--) {
+			npcs[i].update(delta);
+		};
+
+		for (var i = npcs.length - 1; i >= 0; i--) {
+			projectiles[i].update(delta);
+		};
+
+	}, 1000 / 30);
+
 };
 
 var getNpcs = function() {
@@ -86,7 +131,7 @@ var removeFromList = function(list, id) {
 
 var playerAttackTile = function(id, tile) {
 	var tile = grid.getTile(tile.x, tile.y);
-	var npc = tile.npc;
+	var npc = tile.player;
 	if (npc) {
 		console.log(id + " hit npc " + npc.id + "!");
 		npc.health -= 2;
@@ -102,31 +147,43 @@ var playerAttackTile = function(id, tile) {
 
 var killNpc = function(npc) {
 	io.emit("killNpc", {id: npc.id});
-	grid.removeNpc(npc.position.x, npc.position.y);
+	grid.removePlayer(npc.position.x, npc.position.y);
 	removeFromList(npcs, npc.id);
 
 	var x = Math.floor(Math.random() * 4);
 	var y = Math.floor(Math.random() * 4);
 
-	var newNpc = new NPC(nextId++, x, y);
+	var tile = grid.getTile(x, y);
+	var newNpc = new NPC(nextId++, x, y, tile);
+	tile.player = newNpc;
 
-	grid.setNpc(newNpc, x, y);
 	npcs.push(newNpc);
 	io.emit("npcs", [newNpc.minify()]);
-	console.log(npcs);
 };
 
- 
-// start the loop at 30 fps (1000/30ms per frame) and grab its id 
-var frameCount = 0;
-var id = gameloop.setGameLoop(function(delta) {
-	frameCount++;
+var changePlayerTile = function(player, x, y) {
+	console.log("change player tile to " + x + "," + y);
 
-	// for (var i = mobs.length - 1; i >= 0; i--) {
-	// 	mobs[i].update(delta);
-	// };
+	var tile = grid.getTile(x, y);
 
-}, 1000 / 30);
+	player.tile.player = null;
+	player.tile = tile;
+};
+
+var createProjectile = function(x, y, direction) {
+	var projectile = new PROJECTILE(x, y, speed, direction);
+};
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -139,13 +196,31 @@ var NPC = my.Class({
 		this.id = id;
 		this.position = {x: x, y: y};
 		this.sprite = "da_downStand";
-		// this.tileX = tile.gridX;
-		// this.tileY = tile.gridY;
+		this.tile = tile;
 		this.health = 10;
+		this.timeToAttack = 2;
+		this.direction = "down";
 	},
 
 	update: function(dt) {
+		this.timeToAttack -= dt;
+		if (this.timeToAttack < 0) {
+			this.attack();
+			this.timeToAttack = 2;
+		}
+	},
 
+	attack: function() {
+		console.log("prepare to attack");
+
+		var player = players[players.length - 1];
+		if (player) {
+			console.log("here is " + this.tile.x + "," + this.tile.y + " and there is " + player.tile.x + ", " + player.tile.y);
+			this.direction = this.tile.getDirection(player.tile);
+		}
+
+		createProjectile(this.tile.x, this.tile.y, this.direction);
+		io.emit("npcs", [{id: this.id, sprite: "da_" + this.direction + "Attack"}]);
 	},
 
 	minify: function() {
@@ -167,32 +242,80 @@ var GRID = my.Class({
 			var row = [];
 			this.tiles.push(row);
 			for (var y = 0; y < height; y++) {
-				var tile = {x: x, y: y};
+				var tile = new TILE(x, y);
 				this.tiles[x].push(tile);
 			}
 		}
 	},
 
-	setNpc: function(npc, x, y) {
+	setPlayer: function(player, x, y) {
 		var tile = this.getTile(x, y);
-		tile.npc = npc;
+		tile.player = player;
 	},
 
 	getTile: function(x, y) {
 		return this.tiles[x][y];
 	},
 
-	removeNpc: function(x, y) {
+	removePlayer: function(x, y) {
 		var tile = this.getTile(x, y);
-		tile.npc = null;
+		tile.player = null;
+	},
+
+
+
+});
+
+var TILE = my.Class({
+	constructor: function(x, y) {
+		this.x = x;
+		this.y = y;
+	},
+
+	getDirection: function(otherTile) {
+		if (this.x > otherTile.x)
+			return "left";
+		if (this.y > otherTile.y)
+			return "up";
+		if (this.x < otherTile.x)
+			return "right";
+		if (this.y < otherTile.y)
+			return "down";
+
+		return "right";
 	},
 
 });
 
+var PLAYER = my.Class({
+	constructor: function(id, socket, tile) {
+		this.id = id;
+		this.socket = socket;
+		this.tile = tile;
+	},
+});
 
+var PROJECTILE = my.Class({
+	constructor: function(x, y, speed, direction) {
+		this.x = x;
+		this.y = y;
+		this.speed = speed;
+		this.direction = direction;
+		this.sprite = "fireball";
 
+		this.velocity = {
+			x: Math.cos(this.direction), 
+			y: Math.sin(this.direction)
+		};		
+	},
 
+	update: function(dt) {
+		this.x += this.velocity.x * dt * this.speed;
+		this.y += this.velocity.y * dt * this.speed;
+	},
 
+	minify: function() {
+		return {id: this.id, x: this.x, y: this.y};
+	},
 
-
-init();
+});

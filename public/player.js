@@ -16,6 +16,7 @@
 				ability1: this.charge,
 				ability2: this.attack,
 			};
+			this.stance = "Stand";
 		},
 
 		init: function(tile) {
@@ -32,10 +33,10 @@
 		},
 
 		update: function (dt) {
-			this.oldX = this.sprite.position.x;
-			this.oldY = this.sprite.position.y;
 			if (this.sprite.position.x != this.oldX || this.sprite.position.y != this.oldY)
 				console.log(this.sprite.position);
+			this.oldX = this.sprite.position.x;
+			this.oldY = this.sprite.position.y;
 		},
 
 		updatePosition: function(newPosition) {
@@ -49,7 +50,7 @@
 
 		updateSprite: function() {
 			type.graphics.removeSprite(this.sprite);
-			this.sprite = type.graphics.getSprite("tr_" + this.direction + "Stand");
+			this.sprite = type.graphics.getSprite("tr_" + this.direction + this.stance);
 			this.sprite.position = this.position;
 		},
 
@@ -85,10 +86,11 @@
 				that.position = {x: this.x, y: this.y};
 				that.direction = landingTile.getDirection(that.targetNpc.tile);
 				that.updateSprite();
+				type.network.changeTile(that.tile.gridX, that.tile.gridY);
 				// that.attack();
 			})
 			.onUpdate(function() {
-
+				type.network.move(this.x, this.y);
 			})
 			.start();
 		},
@@ -96,6 +98,8 @@
 		attack: function() {
 			var tileToAttack = type.grid.getTileInDirection(this.tile, this.direction);
 			type.network.sendAttack({x: tileToAttack.gridX, y: tileToAttack.gridY});
+			this.stance = "Attack";
+			this.updateSprite();
 		},
 
 	});
@@ -123,7 +127,10 @@
 
 		updateInfo: function(info) {
 			if (info.sprite) {
-				//do it
+				type.graphics.removeSprite(this.sprite);
+				this.sprite = type.graphics.getSprite(info.sprite);
+				this.sprite.position.x = this.tile.x;
+				this.sprite.position.y = this.tile.y;
 			}
 			if (info.pos) {
 				//do it

@@ -1,0 +1,47 @@
+{"frames": {
+
+"fireball_anim_1":
+{
+
+	"frame": {"x":0,"y":0,"w":17,"h":17},
+	"spriteSourceSize": {"x":0,"y":0,"w":17,"h":17},
+	"sourceSize": {"w":17,"h":17}
+},
+"fireball_anim_2":
+{
+
+	"frame": {"x":17,"y":0,"w":17,"h":17},
+	"spriteSourceSize": {"x":0,"y":0,"w":17,"h":17},
+	"sourceSize": {"w":17,"h":17}
+},
+"fireball_anim_3":
+{
+
+	"frame": {"x":34,"y":0,"w":17,"h":17},
+	"spriteSourceSize": {"x":0,"y":0,"w":17,"h":17},
+	"sourceSize": {"w":17,"h":17}
+},
+"fireball_anim_4":
+{
+
+	"frame": {"x":52,"y":0,"w":17,"h":17},
+	"spriteSourceSize": {"x":0,"y":0,"w":17,"h":17},
+	"sourceSize": {"w":17,"h":17}
+},
+"fireball_anim_5":
+{
+
+	"frame": {"x":69,"y":0,"w":17,"h":17},
+	"spriteSourceSize": {"x":0,"y":0,"w":17,"h":17},
+	"sourceSize": {"w":17,"h":17}
+}},
+"meta": {
+	"app": "http://www.texturepacker.com",
+	"version": "1.0",
+	"image": "fireball.png",
+	"format": "RGBA8888",
+	"size": {"w":90,"h":17},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:17e4a2d92ff3e27832c3f4938cec7c85$"
+}
+}
